@@ -26,6 +26,7 @@ import MainAdminLayout from './components/admin/MainLayout'
 import AdminProfile from './pages/admin/AdminProfile'
 import AdminEdit from './pages/admin/AdminEdit'
 import AdminQuizBuilder from './pages/admin/QuizBuilder'
+import AdminQuizList from './pages/admin/AllQuizzes'
 
 function App() {
   return (
@@ -52,13 +53,7 @@ function App() {
         <Route path="/verify-message" element={<VerifyEmailMessage />} />
         <Route path="/email/verify/:code" element={<VerifyUserEmail />} />
 
-
-
-
-
-
         {/* Admin Routes */}
-
 
         <Route
           path="/admin"
@@ -70,33 +65,20 @@ function App() {
         >
           <Route element={<MainAdminLayout />}>
             <Route index element={<AdminHome />} />
-            <Route
-              path="/admin/profile"
-              element={<AdminProfile />}
-            />
-            <Route
-              path="/admin/profile/edit"
-              element={<AdminEdit />}
-            />
-            <Route
-              path="/admin/quiz-builder"
-              element={<AdminQuizBuilder />}/>
+            <Route path="/admin/profile" element={<AdminProfile />} />
+            <Route path="/admin/profile/edit" element={<AdminEdit />} />
+            <Route path="/admin/quiz-builder" element={<AdminQuizBuilder />} />
+            <Route path="/admin/all-quizzes" element={<AdminQuizList />} />
           </Route>
         </Route>
 
-        <Route
-          path="/admin/register"
-          element={<AdminRegister />}
-        />
+        <Route path="/admin/register" element={<AdminRegister />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route
           path="/admin/password/forgot"
           element={<ForgotAdminPassword />}
         />
-        <Route
-          path="/admin/password/reset"
-          element={<ResetAdminPassword />}
-        />
+        <Route path="/admin/password/reset" element={<ResetAdminPassword />} />
         <Route
           path="/admin/verify-message"
           element={<VerifyAdminEmailMessage />}

@@ -13,6 +13,23 @@ type AdminReturnType = {
   updatedAt: Date
 }
 
+export type QuizzesReturnType ={
+  _id: string
+  title: string
+  description: string
+  duration: number
+  questions: [
+    {
+      image: string
+      text: string
+      options: [string]
+      correctAnswer: string
+    }
+  ]
+  createdAt: Date
+  updatedAt: Date
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const registerAdmin = async (formData: RegisterFormData) => {
@@ -159,4 +176,15 @@ export const createQuiz = async (formData: FormData) => {
   if (!response.ok) {
     throw new Error(body.message)
   }
+}
+
+
+
+export const getAllQuizzes = async (page: number) => {
+  const response = await fetch(`${API_BASE_URL}/quiz?page=${page}`, {
+    credentials: 'include',
+  })
+  const body = await response.json()
+  if (!response.ok) throw new Error('Failed to fetch quizzes')
+  return body
 }

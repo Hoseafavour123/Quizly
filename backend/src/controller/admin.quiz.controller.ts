@@ -3,6 +3,29 @@ import { v2 as cloudinary } from 'cloudinary'
 import { quizSchema } from './quiz.schema'
 import catchErrors from '../utils/catchErrors'
 
+
+
+
+// Get all quizzes
+
+export const getAllQuizzes = catchErrors(async (req, res) => {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = 5;
+
+    const totalQuizzes = await Quiz.countDocuments();
+    const quizzes = await Quiz.find()
+      .sort({ createdAt: -1 }) // Latest first
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    res.json({
+      quizzes,
+      currentPage: page,
+      totalPages: Math.ceil(totalQuizzes / limit),
+      totalQuizzes,
+    });
+  })
+
 // Create a Quiz
 export const createQuiz = catchErrors(async (req, res) => {
   const parsedData = quizSchema.safeParse(req.body)

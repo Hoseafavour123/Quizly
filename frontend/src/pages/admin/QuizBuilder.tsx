@@ -5,6 +5,7 @@ import * as apiAdmin from '../../apiAdmin'
 import { useAppContext } from '../../context/AppContext'
 import { abcBlock } from '../../assets/images'
 import { FloatingLabel } from 'flowbite-react'
+import { useNavigate } from 'react-router-dom'
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import styles
@@ -25,6 +26,7 @@ type QuizFormData = {
 
 const QuizBuilder = () => {
   const { showToast } = useAppContext()
+  const navigate = useNavigate()
   const {control, register, handleSubmit, reset } = useForm<QuizFormData>()
   const [questions, setQuestions] = useState<Question[]>([])
   const [newQuestion, setNewQuestion] = useState<Question>({
@@ -39,6 +41,7 @@ const QuizBuilder = () => {
       showToast({ message: 'Quiz created successfully!', type: 'SUCCESS' })
       reset()
       setQuestions([])
+      navigate('/admin/all-quizzes')
     },
     onError: (error: Error) => {
       showToast({ message: error.message, type: 'ERROR' })
