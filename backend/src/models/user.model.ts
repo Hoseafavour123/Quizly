@@ -1,48 +1,51 @@
 import mongoose from "mongoose";
-import { compareValue, hashValue } from "../utils/bcrypt";
+import { hashValue, compareHash } from "../utils/bcrypt";
 
 export interface UserDocument extends mongoose.Document {
-  email: string;
-  password: string;
-  verified: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  comparePassword(val: string): Promise<boolean>;
-  omitPassword(): Pick<
-    UserDocument,
-    "_id" | "email" | "verified" | "createdAt" | "updatedAt" | "__v"
-  >;
+    email: string;
+    password: string;
+    firstName: string;
+    lastName:string;
+    verified: boolean;
+    jobTitle:string
+    imageInfo: {imageUrl:string, imageId:string};
+    createdAt: Date;
+    updatedAt: Date;
+    comparePassword: (password: string) => Promise<boolean>;
+    omitPassword: () => Omit<UserDocument, 'password'>;
 }
 
 const userSchema = new mongoose.Schema<UserDocument>(
   {
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    verified: { type: Boolean, required: true, default: false },
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    verified: { type: Boolean, default: false },
+    imageInfo: {
+      imageUrl: { type: String, default: '' },
+      imageId: { type: String , default: ''},
+    },
   },
-  {
-    timestamps: true,
-  }
-);
+  { timestamps: true }
+)
 
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
-    return next();
-  }
+userSchema.pre<UserDocument>('save', async function (next) {
+    if (!this.isModified('password')) return next();
+    this.password = await hashValue(this.password);
+    next()
+})
 
-  this.password = await hashValue(this.password);
-  return next();
-});
-
-userSchema.methods.comparePassword = async function (val: string) {
-  return compareValue(val, this.password);
-};
+userSchema.methods.comparePassword = async function (password: string) {
+    return await compareHash(password, this.password)
+}
 
 userSchema.methods.omitPassword = function () {
-  const user = this.toObject();
-  delete user.password;
-  return user;
-};
+    const user = this.toObject();
+    delete user.password;
+    return user;
+}
 
-const UserModel = mongoose.model<UserDocument>("User", userSchema);
+const UserModel = mongoose.model<UserDocument>('User', userSchema);
+
 export default UserModel;

@@ -1,13 +1,9 @@
 import { Router } from "express";
-import {
-  deleteSessionHandler,
-  getSessionsHandler,
-} from "../controllers/session.controller";
+import { getSessionsHandler, deleteSessionHandler } from "../controller/sessions.controller";
 
-const sessionRoutes = Router();
+const router = Router()
 
-// prefix: /sessions
-sessionRoutes.get("/", getSessionsHandler);
-sessionRoutes.delete("/:id", deleteSessionHandler);
+router.get('/', getSessionsHandler)
+router.delete('/:id', deleteSessionHandler)
 
-export default sessionRoutes;
+export default router

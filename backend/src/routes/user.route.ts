@@ -1,9 +1,14 @@
-import { Router } from "express";
-import { getUserHandler } from "../controllers/user.controller";
+import { Router } from 'express';
+import { deleteUser, updateUser, getAllUsers, getUserHandler } from '../controller/user.controller';
+import { uploadMiddleware } from '../middleware/uploadMiddleware';
 
-const userRoutes = Router();
 
-// prefix: /user
-userRoutes.get("/", getUserHandler);
+const router = Router();
 
-export default userRoutes;
+
+router.get('/', getUserHandler)
+router.get('/all', getAllUsers)
+router.delete('/:id', deleteUser);
+router.put('/update', uploadMiddleware, updateUser);
+
+export default router;

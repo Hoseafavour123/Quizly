@@ -1,44 +1,46 @@
-import { Response, ErrorRequestHandler } from "express";
-import { z } from "zod";
-import AppError from "../utils/AppError";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from "../constants/http";
-import { REFRESH_PATH, clearAuthCookies } from "../utils/cookies";
+import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
+import { z } from 'zod';
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from '../constants/http';
+import AppError from '../utils/AppError';
+import { clearAuthCookies, REFRESH_PATH } from '../utils/cookies';
 
-const handleZodError = (res: Response, error: z.ZodError) => {
-  const errors = error.issues.map((err) => ({
-    path: err.path.join("."),
-    message: err.message,
-  }));
+const handleZodError = (res: Response, err: z.ZodError) => {
+    const errors = err.issues.map((issue) => ({
+        path: issue.path.join('.'),
+        message: issue.message
+    }));
 
-  return res.status(BAD_REQUEST).json({
-    errors,
-    message: error.message,
-  });
+    return res.status(BAD_REQUEST).json({
+        message: 'Validation error',
+        errors
+    });
 };
 
-const handleAppError = (res: Response, error: AppError) => {
-  return res.status(error.statusCode).json({
-    message: error.message,
-    errorCode: error.errorCode,
-  });
+
+const handleAppError = (res: Response, err: AppError) => {
+    return res.status(err.statusCode).json({
+        message: err.message,
+        errorCode: err.errorCode
+    });
 };
 
-const errorHandler: ErrorRequestHandler = (error, req, res, next) => {
-  console.log(`PATH ${req.path}`, error);
+const errorHandler: ErrorRequestHandler = (err, req: Request, res: Response, next: NextFunction): void => {
+    console.log(`PATH ${req.path}`, err);
 
-  if (req.path === REFRESH_PATH) {
-    clearAuthCookies(res);
-  }
+    if (req.path === REFRESH_PATH) {
+        clearAuthCookies(res)
+    }
+    if (err instanceof z.ZodError) {
+        handleZodError(res, err);
+        return
+    }
 
-  if (error instanceof z.ZodError) {
-    return handleZodError(res, error);
-  }
+    if (err instanceof AppError) {
+         handleAppError(res, err)
+        return
+    }
 
-  if (error instanceof AppError) {
-    return handleAppError(res, error);
-  }
-
-  return res.status(INTERNAL_SERVER_ERROR).send("Internal server error");
+    res.status(INTERNAL_SERVER_ERROR).send('Internal server error');
 };
 
 export default errorHandler;
