@@ -17,7 +17,7 @@ export type QuizzesReturnType ={
   _id: string
   title: string
   description: string
-  duration: number
+  duration: string | undefined
   questions: [
     {
       image: string
@@ -187,4 +187,34 @@ export const getAllQuizzes = async (page: number) => {
   const body = await response.json()
   if (!response.ok) throw new Error('Failed to fetch quizzes')
   return body
+}
+
+
+
+export const fetchQuiz = async (id: string): Promise<QuizzesReturnType> => {
+  const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
+    credentials: 'include'
+  })
+  if (!response.ok) throw new Error('Failed to fetch quiz')
+  return response.json()
+}
+
+export const updateQuiz = async ({
+  id,
+  formData,
+}: {
+  id: string
+  formData: FormData
+}) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
+    method: 'PUT',
+    body: formData,
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update quiz: ${response.statusText}`)
+  }
+
+  return response.json()
 }

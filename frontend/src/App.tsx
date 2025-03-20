@@ -27,6 +27,7 @@ import AdminProfile from './pages/admin/AdminProfile'
 import AdminEdit from './pages/admin/AdminEdit'
 import AdminQuizBuilder from './pages/admin/QuizBuilder'
 import AdminQuizList from './pages/admin/AllQuizzes'
+import UpdateQuiz from './pages/admin/UpdateQuiz'
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
             <Route path="/admin/profile" element={<AdminProfile />} />
             <Route path="/admin/profile/edit" element={<AdminEdit />} />
             <Route path="/admin/quiz-builder" element={<AdminQuizBuilder />} />
+            <Route path='/admin/quiz-builder/:quizId' element={<UpdateQuiz />} />
             <Route path="/admin/all-quizzes" element={<AdminQuizList />} />
           </Route>
         </Route>

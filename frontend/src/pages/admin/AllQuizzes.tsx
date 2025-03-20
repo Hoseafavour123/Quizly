@@ -30,7 +30,7 @@ const AdminQuizList = () => {
 
       {!isLoading && !isError && data && (
         <>
-          <div className="grid grid-cols-3 gap-5 mt-5">
+          <div className="grid md:grid-cols-3 gap-5 mt-5">
             {data.quizzes.map((quiz: any) => (
               <QuizCard key={quiz._id} quiz={quiz} />
             ))}
