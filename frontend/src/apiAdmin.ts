@@ -218,3 +218,15 @@ export const updateQuiz = async ({
 
   return response.json()
 }
+
+
+export const deleteQuiz = async (id: string) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
+    method: 'DELETE',
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    throw new Error('Failed to delete quiz')
+  }
+}

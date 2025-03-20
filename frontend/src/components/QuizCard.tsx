@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import {FaEdit, FaTrash } from 'react-icons/fa'
+import DeleteQuizButton from './buttons/DeleteQuiz'
 
 interface QuizCardProps {
   quiz: any
@@ -26,10 +27,8 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
           >
             <FaEdit className="text-blue-500" />
           </Link>
-          <Link to={`/admin/quiz-builder/${quiz._id}`} className="text-red-500">
-            {' '}
-            <FaTrash className="text-red-500 mr-2" />
-          </Link>
+       
+            <DeleteQuizButton quizId={`${quiz._id}`}/>
         </div>
       </div>
     </>

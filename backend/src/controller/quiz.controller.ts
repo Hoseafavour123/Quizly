@@ -229,5 +229,5 @@ export const deleteQuiz = catchErrors(async (req, res) => {
   await Promise.all(deleteImagePromises)
   await Quiz.findByIdAndDelete(id)
 
-  res.status(200).json({ message: 'Quiz deleted successfully!' })
+  return res.status(200).json({ message: 'Quiz deleted successfully!' })
 })
