@@ -40,10 +40,10 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
   return (
     <>
       <div className="p-3 rounded-md border border-gray-200 shadow-md bg-white">
-        <div className="flex items-center justify-center bg-indigo-500 h-[200px] w-full">
+        <div className={`${quiz.status == 'draft' ? 'bg-yellow-200': `${quiz.status == 'live' ? 'bg-green-300': 'bg-gray-300'}`} flex items-center justify-center bg-indigo-500 h-[200px] w-full`}>
           <div className="rounded-full animate-pulse w-14 h-14 bg-black flex items-center justify-center">
             <div className="p-6 text-white rounded-full">
-              <button onClick={openModal}> Go live </button>
+              <button onClick={openModal}> {quiz.status == 'draft' ? 'Go live': <>{quiz.status == 'live' ? 'Active': 'Closed'}</>}</button>
             </div>
           </div>
         </div>
