@@ -12,6 +12,9 @@ import UserProfile from './pages/user/UserProfile'
 import UserEdit from './pages/user/UserProfileEdit'
 import MainUserLayout from './components/user/MainLayout'
 
+import { AnimatePresence } from 'framer-motion'
+import AnimatedLayout from './components/animatesThemes/PageTransitions'
+
 
 import AdminRegister from './pages/admin/authentication/Register'
 import AdminLogin from './pages/admin/authentication/Login'
@@ -28,68 +31,85 @@ import AdminEdit from './pages/admin/AdminEdit'
 import AdminQuizBuilder from './pages/admin/QuizBuilder'
 import AdminQuizList from './pages/admin/AllQuizzes'
 import UpdateQuiz from './pages/admin/UpdateQuiz'
+import QuizPage from './pages/admin/QuizPage'
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route
-          path="/"
-          element={
-            <AuthProvider>
-              <UserContainer />
-            </AuthProvider>
-          }
-        >
-          <Route element={<MainUserLayout />}>
-            <Route index element={<UserHome />} />
-            <Route path="/profile" element={<UserProfile />} />
-            <Route path="/profile/edit" element={<UserEdit />} />
+      <AnimatePresence mode="wait">
+        <Routes>
+          <Route element={<AnimatedLayout />}>
+            {/* User Routes */}
+            <Route
+              path="/"
+              element={
+                <AuthProvider>
+                  <UserContainer />
+                </AuthProvider>
+              }
+            >
+              <Route element={<MainUserLayout />}>
+                <Route index element={<UserHome />} />
+                <Route path="/profile" element={<UserProfile />} />
+                <Route path="/profile/edit" element={<UserEdit />} />
+              </Route>
+            </Route>
+
+            <Route path="/register" element={<UserRegister />} />
+            <Route path="/login" element={<UserLogin />} />
+            <Route path="/password/forgot" element={<ForgotPassword />} />
+            <Route path="/password/reset" element={<ResetPassword />} />
+            <Route path="/verify-message" element={<VerifyEmailMessage />} />
+            <Route path="/email/verify/:code" element={<VerifyUserEmail />} />
+
+            {/* Admin Routes */}
+
+            <Route
+              path="/admin"
+              element={
+                <AdminAuthProvider>
+                  <AdminContainer />
+                </AdminAuthProvider>
+              }
+            >
+              <Route element={<MainAdminLayout />}>
+                <Route index element={<AdminHome />} />
+                <Route path="/admin/profile" element={<AdminProfile />} />
+                <Route path="/admin/profile/edit" element={<AdminEdit />} />
+                <Route
+                  path="/admin/quiz-builder"
+                  element={<AdminQuizBuilder />}
+                />
+                <Route
+                  path="/admin/quiz-builder/:quizId"
+                  element={<UpdateQuiz />}
+                />
+                <Route path="/admin/all-quizzes" element={<AdminQuizList />} />
+                <Route path='/admin/live-quiz' element={<QuizPage/>}/>
+              </Route>
+            </Route>
+
+            <Route path="/admin/register" element={<AdminRegister />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route
+              path="/admin/password/forgot"
+              element={<ForgotAdminPassword />}
+            />
+            <Route
+              path="/admin/password/reset"
+              element={<ResetAdminPassword />}
+            />
+            <Route
+              path="/admin/verify-message"
+              element={<VerifyAdminEmailMessage />}
+            />
+            <Route
+              path="/admin/email/verify/:code"
+              element={<VerifyAdminEmail />}
+            />
           </Route>
-        </Route>
-        <Route path="/register" element={<UserRegister />} />
-        <Route path="/login" element={<UserLogin />} />
-        <Route path="/password/forgot" element={<ForgotPassword />} />
-        <Route path="/password/reset" element={<ResetPassword />} />
-        <Route path="/verify-message" element={<VerifyEmailMessage />} />
-        <Route path="/email/verify/:code" element={<VerifyUserEmail />} />
-
-        {/* Admin Routes */}
-
-        <Route
-          path="/admin"
-          element={
-            <AdminAuthProvider>
-              <AdminContainer />
-            </AdminAuthProvider>
-          }
-        >
-          <Route element={<MainAdminLayout />}>
-            <Route index element={<AdminHome />} />
-            <Route path="/admin/profile" element={<AdminProfile />} />
-            <Route path="/admin/profile/edit" element={<AdminEdit />} />
-            <Route path="/admin/quiz-builder" element={<AdminQuizBuilder />} />
-            <Route path='/admin/quiz-builder/:quizId' element={<UpdateQuiz />} />
-            <Route path="/admin/all-quizzes" element={<AdminQuizList />} />
-          </Route>
-        </Route>
-
-        <Route path="/admin/register" element={<AdminRegister />} />
-        <Route path="/admin/login" element={<AdminLogin />} />
-        <Route
-          path="/admin/password/forgot"
-          element={<ForgotAdminPassword />}
-        />
-        <Route path="/admin/password/reset" element={<ResetAdminPassword />} />
-        <Route
-          path="/admin/verify-message"
-          element={<VerifyAdminEmailMessage />}
-        />
-        <Route
-          path="/admin/email/verify/:code"
-          element={<VerifyAdminEmail />}
-        />
-      </Routes>
+        </Routes>
+      </AnimatePresence>
     </BrowserRouter>
   )
 }

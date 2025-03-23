@@ -230,3 +230,46 @@ export const deleteQuiz = async (id: string) => {
     throw new Error('Failed to delete quiz')
   }
 }
+
+
+export const goLive = async (id:string) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/go-live/${id}`, {
+    method: 'PUT',
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+   // Try to parse error message from response
+    let errorMessage = 'Failed to go live'; // Default error message
+
+    try {
+      const errorData = await response.json(); // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage; // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error);
+    }
+
+    throw new Error(errorMessage);
+  }
+}
+
+export const getLiveQuiz = async () => {
+  console.log('fetchig live quiz...')
+  const response = await fetch(`${API_BASE_URL}/quiz/get-live-quiz`, {
+    credentials: 'include',
+  })
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to fetch live quiz' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
+}

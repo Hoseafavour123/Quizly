@@ -341,15 +341,14 @@ const UpdateQuiz = () => {
             <h2 className="text-2xl text-center mt-5 font-semibold">
               Added <span> Questions</span>
             </h2>
-            {questions.map((question, index) => (
-              
+            {questions.map((question, index) => (    
               <div key={index} className="border p-3 mb-2 rounded shadow-sm">
                 <h4 className="font-bold">
                   {index + 1}. {question.text}
                 </h4>
-                {data?.questions[index].image && (
+                {data?.questions[index]?.image && (
                   <img
-                    src={data?.questions[index].image}
+                    src={data?.questions[index]?.image}
                     alt="Question"
                     className="w-40 h-40 object-cover mt-2"
                   />

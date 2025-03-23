@@ -5,7 +5,7 @@ import {
   ReactNode,
   ReactElement,
 } from 'react'
-import { Modal, Button } from 'flowbite-react'
+import {  Button } from 'flowbite-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface ModalOptions {

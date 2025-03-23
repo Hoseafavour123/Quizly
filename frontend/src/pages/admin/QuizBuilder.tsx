@@ -5,7 +5,7 @@ import * as apiAdmin from '../../apiAdmin'
 import { useAppContext } from '../../context/AppContext'
 import { abcBlock } from '../../assets/images'
 import { FloatingLabel } from 'flowbite-react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Import styles
@@ -95,214 +95,220 @@ const QuizBuilder = () => {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
-      <div className="text-center">
-        <img src={abcBlock} alt="Quiz Builder" className="w-25 mx-auto" />
-        <h2 className="text-2xl font-bold mb-4">
-          Quiz <span className="text-pink-500">Builder</span>
-        </h2>
-      </div>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="flex gap-5 rounded-md items-center border p-2">
-          <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-            1
-          </div>
-          <p className="font-bold">Quiz Name: </p>
-          <div className="w-3/4">
-            <FloatingLabel {...register('title')} variant="standard" label="" />
-          </div>
+    <>
+      <div className="max-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <div className="text-center">
+          <img src={abcBlock} alt="Quiz Builder" className="w-25 mx-auto" />
+          <h2 className="text-2xl font-bold mb-4">
+            Quiz <span className="text-pink-500">Builder</span>
+          </h2>
         </div>
 
-        <div className="rounded-md items-center border p-2  mt-5">
-          <div className="flex gap-5 mb-3 items-center">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex gap-5 rounded-md items-center border p-2">
             <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-              2
+              1
             </div>
-            <span className="font-bold">Description:</span>
+            <p className="font-bold">Quiz Name: </p>
+            <div className="w-3/4">
+              <FloatingLabel
+                {...register('title')}
+                variant="standard"
+                label=""
+              />
+            </div>
           </div>
 
-          <div className="">
-            <Controller
-              {...register('description')}
-              control={control}
-              render={({ field }) => <ReactQuill {...field} theme="snow" />}
-            />
+          <div className="rounded-md items-center border p-2  mt-5">
+            <div className="flex gap-5 mb-3 items-center">
+              <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
+                2
+              </div>
+              <span className="font-bold">Description:</span>
+            </div>
 
-            <p className="mt-4 mb-4 text-sm font-semibold">Preview:</p>
-            <div className="border p-2 rounded bg-gray-100 mt-2">
+            <div className="">
               <Controller
                 {...register('description')}
                 control={control}
-                render={({ field }) => (
-                  <div dangerouslySetInnerHTML={{ __html: field?.value }} />
-                )}
+                render={({ field }) => <ReactQuill {...field} theme="snow" />}
               />
+
+              <p className="mt-4 mb-4 text-sm font-semibold">Preview:</p>
+              <div className="border p-2 rounded bg-gray-100 mt-2">
+                <Controller
+                  {...register('description')}
+                  control={control}
+                  render={({ field }) => (
+                    <div dangerouslySetInnerHTML={{ __html: field?.value }} />
+                  )}
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex gap-5 rounded-md items-center border p-2 mt-5">
-          <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-            3
-          </div>
-          <p className="font-bold">Duration(in minutes): </p>
-          <div className="">
-            <FloatingLabel
-              {...register('duration')}
-              min={1}
-              type="number"
-              variant="standard"
-              label=""
-            />
-          </div>
-        </div>
-
-        <div className="gap-5 rounded-md items-center border p-2 mt-[50px]">
-          <div className="flex gap-5 items-center">
+          <div className="flex gap-5 rounded-md items-center border p-2 mt-5">
             <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-              4
+              3
             </div>
-            <p className="font-bold">Quiz Questions: </p>
+            <p className="font-bold">Duration(in minutes): </p>
+            <div className="">
+              <FloatingLabel
+                {...register('duration')}
+                min={1}
+                type="number"
+                variant="standard"
+                label=""
+              />
+            </div>
           </div>
 
-          <h3 className="font-semibold mt-3 mb-4">
-            Add Question(attach image if needed)
-          </h3>
+          <div className="gap-5 rounded-md items-center border p-2 mt-[50px]">
+            <div className="flex gap-5 items-center">
+              <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
+                4
+              </div>
+              <p className="font-bold">Quiz Questions: </p>
+            </div>
 
-          <FloatingLabel
-            value={newQuestion.text}
-            onChange={(e) =>
-              setNewQuestion({ ...newQuestion, text: e.target.value })
-            }
-            variant="standard"
-            label="Question"
-            className="w-full"
-          />
+            <h3 className="font-semibold mt-3 mb-4">
+              Add Question(attach image if needed)
+            </h3>
 
-          {newQuestion.options.map((option, index) => (
-            <div key={index} className="flex items-center gap-2 mb-2">
-              <span className="font-bold">
-                {String.fromCharCode(65 + index)}.
-              </span>
+            <FloatingLabel
+              value={newQuestion.text}
+              onChange={(e) =>
+                setNewQuestion({ ...newQuestion, text: e.target.value })
+              }
+              variant="standard"
+              label="Question"
+              className="w-full"
+            />
+
+            {newQuestion.options.map((option, index) => (
+              <div key={index} className="flex items-center gap-2 mb-2">
+                <span className="font-bold">
+                  {String.fromCharCode(65 + index)}.
+                </span>
+                <FloatingLabel
+                  value={option}
+                  onChange={(e) => {
+                    const updatedOptions = [...newQuestion.options]
+                    updatedOptions[index] = e.target.value
+                    setNewQuestion({ ...newQuestion, options: updatedOptions })
+                  }}
+                  variant="standard"
+                  label={`Option ${index + 1}`}
+                  className="w-full"
+                />
+
+                {newQuestion.options.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeOption(index)}
+                    className="bg-red-400 text-white text-xs p-1 rounded"
+                  >
+                    X
+                  </button>
+                )}
+              </div>
+            ))}
+
+            <button
+              type="button"
+              onClick={addOption}
+              className="bg-gray-500 text-white text-xs px-3 py-1 rounded mb-3"
+            >
+              + Add Option
+            </button>
+
+            <div className=" mt-5">
+              <p className="font-semibold">Correct answer (A, B, C or D)</p>
               <FloatingLabel
-                value={option}
-                onChange={(e) => {
-                  const updatedOptions = [...newQuestion.options]
-                  updatedOptions[index] = e.target.value
-                  setNewQuestion({ ...newQuestion, options: updatedOptions })
-                }}
+                value={newQuestion.correctAnswer}
+                onChange={(e) =>
+                  setNewQuestion({
+                    ...newQuestion,
+                    correctAnswer: e.target.value.toUpperCase(),
+                  })
+                }
                 variant="standard"
-                label={`Option ${index + 1}`}
-                className="w-full"
+                label={``}
+                className="w-auto"
               />
 
-              {newQuestion.options.length > 1 && (
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) =>
+                  setNewQuestion({
+                    ...newQuestion,
+                    image: e.target.files?.[0] || null,
+                  })
+                }
+                className="p-2 border rounded mb-3 text-xs"
+              />
+            </div>
+
+            <button
+              type="button"
+              className="bg-indigo-500 text-white px-2 py-1 rounded mb-4"
+              onClick={addQuestion}
+            >
+              Add Question
+            </button>
+          </div>
+
+          <div className="border-t pt-4 mt-8">
+            <h2 className="text-2xl text-center mt-5 font-semibold">
+              Added <span> Questions</span>
+            </h2>
+            {questions.map((question, index) => (
+              <div key={index} className="border p-3 mb-2 rounded shadow-sm">
+                <h4 className="font-bold">
+                  {index + 1}. {question.text}
+                </h4>
+                {question.image && (
+                  <img
+                    src={URL.createObjectURL(question.image)}
+                    alt="Question"
+                    className="w-40 h-40 object-cover mt-2"
+                  />
+                )}
+                <ul className="mt-2">
+                  {question.options.map((option, optIndex) => (
+                    <li key={optIndex} className="flex gap-2 items-center">
+                      <span className="font-bold">
+                        {String.fromCharCode(65 + optIndex)}.
+                      </span>{' '}
+                      {option}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2">
+                  <strong>Correct Answer:</strong> {question.correctAnswer}
+                </p>
                 <button
                   type="button"
-                  onClick={() => removeOption(index)}
-                  className="bg-red-400 text-white text-xs p-1 rounded"
+                  onClick={() => deleteQuestion(index)}
+                  className="bg-red-500 text-white text-xs px-2 py-1 rounded mt-2"
                 >
-                  X
+                  Delete Question
                 </button>
-              )}
-            </div>
-          ))}
-
-          <button
-            type="button"
-            onClick={addOption}
-            className="bg-gray-500 text-white text-xs px-3 py-1 rounded mb-3"
-          >
-            + Add Option
-          </button>
-
-          <div className=" mt-5">
-            <p className="font-semibold">Correct answer (A, B, C or D)</p>
-            <FloatingLabel
-              value={newQuestion.correctAnswer}
-              onChange={(e) =>
-                setNewQuestion({
-                  ...newQuestion,
-                  correctAnswer: e.target.value.toUpperCase(),
-                })
-              }
-              variant="standard"
-              label={``}
-              className="w-auto"
-            />
-
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) =>
-                setNewQuestion({
-                  ...newQuestion,
-                  image: e.target.files?.[0] || null,
-                })
-              }
-              className="p-2 border rounded mb-3 text-xs"
-            />
+              </div>
+            ))}
           </div>
 
           <button
-            type="button"
-            className="bg-indigo-500 text-white px-2 py-1 rounded mb-4"
-            onClick={addQuestion}
+            type="submit"
+            className="bg-pink-600 text-white px-6 py-2 rounded mt-4"
+            disabled={isLoading}
           >
-            Add Question
+            {isLoading ? 'Saving...' : 'Save Quiz'}
           </button>
-        </div>
-
-        <div className="border-t pt-4 mt-8">
-          <h2 className="text-2xl text-center mt-5 font-semibold">
-            Added <span> Questions</span>
-          </h2>
-          {questions.map((question, index) => (
-            <div key={index} className="border p-3 mb-2 rounded shadow-sm">
-              <h4 className="font-bold">
-                {index + 1}. {question.text}
-              </h4>
-              {question.image && (
-                <img
-                  src={URL.createObjectURL(question.image)}
-                  alt="Question"
-                  className="w-40 h-40 object-cover mt-2"
-                />
-              )}
-              <ul className="mt-2">
-                {question.options.map((option, optIndex) => (
-                  <li key={optIndex} className="flex gap-2 items-center">
-                    <span className="font-bold">
-                      {String.fromCharCode(65 + optIndex)}.
-                    </span>{' '}
-                    {option}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-2">
-                <strong>Correct Answer:</strong> {question.correctAnswer}
-              </p>
-              <button
-                type="button"
-                onClick={() => deleteQuestion(index)}
-                className="bg-red-500 text-white text-xs px-2 py-1 rounded mt-2"
-              >
-                Delete Question
-              </button>
-            </div>
-          ))}
-        </div>
-
-        <button
-          type="submit"
-          className="bg-pink-600 text-white px-6 py-2 rounded mt-4"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : 'Save Quiz'}
-        </button>
-      </form>
-    </div>
+        </form>
+      </div>
+    </>
   )
 }
 

@@ -3,7 +3,7 @@ import { v2 as cloudinary } from 'cloudinary'
 import { quizSchema } from './quiz.schema'
 import catchErrors from '../utils/catchErrors'
 import appAssert from '../utils/appAssert'
-
+import { getSocket } from "../sockets/socket";
 
 // Get single quiz
 export const getQuiz = catchErrors(async (req, res) => {
@@ -13,27 +13,24 @@ export const getQuiz = catchErrors(async (req, res) => {
   return res.json(quiz)
 })
 
-
-
 // Get all quizzes
-
 export const getAllQuizzes = catchErrors(async (req, res) => {
-    const page = parseInt(req.query.page as string) || 1;
-    const limit = 5;
+  const page = parseInt(req.query.page as string) || 1
+  const limit = 5
 
-    const totalQuizzes = await Quiz.countDocuments();
-    const quizzes = await Quiz.find()
-      .sort({ createdAt: -1 }) // Latest first
-      .skip((page - 1) * limit)
-      .limit(limit);
+  const totalQuizzes = await Quiz.countDocuments()
+  const quizzes = await Quiz.find()
+    .sort({ createdAt: -1 }) // Latest first
+    .skip((page - 1) * limit)
+    .limit(limit)
 
-    res.json({
-      quizzes,
-      currentPage: page,
-      totalPages: Math.ceil(totalQuizzes / limit),
-      totalQuizzes,
-    });
+  res.json({
+    quizzes,
+    currentPage: page,
+    totalPages: Math.ceil(totalQuizzes / limit),
+    totalQuizzes,
   })
+})
 
 // Create a Quiz
 export const createQuiz = catchErrors(async (req, res) => {
@@ -96,8 +93,6 @@ export const createQuiz = catchErrors(async (req, res) => {
   res.status(201).json({ message: 'Quiz created successfully!' })
 })
 
-
-
 // Update a Quiz
 export const updateQuiz = catchErrors(async (req, res) => {
   const { id } = req.params
@@ -134,8 +129,6 @@ export const updateQuiz = catchErrors(async (req, res) => {
     }
   }
 
-
-
   const processedQuestions = await Promise.all(
     questions.map(async (q, index) => {
       let imageUrl = q.image || null // Preserve old image if no new one
@@ -149,7 +142,7 @@ export const updateQuiz = catchErrors(async (req, res) => {
         try {
           imageUrl = await uploadToCloudinary(file) // Upload new image
         } catch (error) {
-          console.error(`❌ Image upload failed for question ${index}:`, error)
+          console.error(`Image upload failed for question ${index}:`, error)
           return res
             .status(500)
             .json({ message: `Image upload failed for question ${index}` })
@@ -193,7 +186,6 @@ export const updateQuiz = catchErrors(async (req, res) => {
   //   })
   // )
 
-
   // Update quiz in DB
   await Quiz.findByIdAndUpdate(id, {
     title,
@@ -202,15 +194,8 @@ export const updateQuiz = catchErrors(async (req, res) => {
     questions: processedQuestions,
   })
 
-
   return res.status(200).json({ message: 'Quiz updated successfully!' })
 })
-
-
-
-
-
-
 
 // Delete a quiz with Cloudinary cleanup
 export const deleteQuiz = catchErrors(async (req, res) => {
@@ -230,4 +215,42 @@ export const deleteQuiz = catchErrors(async (req, res) => {
   await Quiz.findByIdAndDelete(id)
 
   return res.status(200).json({ message: 'Quiz deleted successfully!' })
+})
+
+
+
+
+export const goLive = catchErrors(async (req, res) => {
+   const { id } = req.params
+   const quiz = await Quiz.findById(id)
+
+   if (!quiz) return res.status(404).json({ message: 'Quiz not found' })
+
+   const liveQuiz = await Quiz.findOne({ status: 'live' })
+   if (liveQuiz)
+     return res.status(400).json({ message: 'A quiz is already live' })
+
+   quiz.status = 'live'
+   quiz.startTime = new Date()
+   await quiz.save()
+
+   const io = getSocket() // ✅ Get the io instance
+   io.emit('quiz-live', quiz) // Notify users in real-time
+
+   setTimeout(async () => {
+     quiz.status = 'closed'
+     await quiz.save()
+     io.emit('quiz-ended', { quizId: quiz._id })
+   }, quiz.duration * 60 * 1000) // Auto-close after duration
+
+   return res.json({ message: 'Quiz is live!' })
+})
+
+
+
+export const getLiveQuiz = catchErrors(async (req, res) => {
+  const liveQuiz = await Quiz.findOne({ status: 'live' })
+
+ if (!liveQuiz) return res.status(400).json({ message: 'No live quiz' })
+  return res.json(liveQuiz)
 })
