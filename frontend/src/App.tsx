@@ -11,6 +11,7 @@ import UserHome from './pages/user/Home'
 import UserProfile from './pages/user/UserProfile'
 import UserEdit from './pages/user/UserProfileEdit'
 import MainUserLayout from './components/user/MainLayout'
+import UserQuizPage from './pages/user/UserQuizPage'
 
 import { AnimatePresence } from 'framer-motion'
 import AnimatedLayout from './components/animatesThemes/PageTransitions'
@@ -32,6 +33,9 @@ import AdminQuizBuilder from './pages/admin/QuizBuilder'
 import AdminQuizList from './pages/admin/AllQuizzes'
 import UpdateQuiz from './pages/admin/UpdateQuiz'
 import QuizPage from './pages/admin/QuizPage'
+import MyQuizzes from './pages/user/MyQuizzes'
+import Statistics from './pages/user/Statistics'
+import Leaderboard from './pages/user/Leaderboard'
 
 function App() {
   return (
@@ -52,6 +56,10 @@ function App() {
                 <Route index element={<UserHome />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/profile/edit" element={<UserEdit />} />
+                <Route path='/live-quiz' element={<UserQuizPage/>}/>
+                <Route path='/my-quizzes'  element={<MyQuizzes/>}/>
+                <Route path='/statistics' element={<Statistics/>}/>
+                <Route path='/leaderboard' element={<Leaderboard/>}/>
               </Route>
             </Route>
 
@@ -61,6 +69,13 @@ function App() {
             <Route path="/password/reset" element={<ResetPassword />} />
             <Route path="/verify-message" element={<VerifyEmailMessage />} />
             <Route path="/email/verify/:code" element={<VerifyUserEmail />} />
+
+
+
+
+
+
+
 
             {/* Admin Routes */}
 

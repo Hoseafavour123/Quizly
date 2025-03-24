@@ -91,7 +91,6 @@ const UserEdit: React.FC = () => {
             )}
           </div>
 
-  
           <div>
             <label className="block text-sm font-medium text-gray-700">
               New Password
@@ -106,8 +105,6 @@ const UserEdit: React.FC = () => {
               </p>
             )}
           </div>
-
-      
 
           <div>
             <label className="block text-sm font-medium text-gray-700">

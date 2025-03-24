@@ -49,9 +49,7 @@ const VolunteerRegister: React.FC = () => {
       </div>
 
       <div className="md:w-[30%] mt-10 p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          Registration
-        </h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">Registration</h2>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700">

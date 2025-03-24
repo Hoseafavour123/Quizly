@@ -146,3 +146,57 @@ export const updateUser = async (
 
   return body
 }
+
+
+
+export const getLiveQuiz = async () => {
+  console.log('fetchig live quiz...')
+  const response = await fetch(`${API_BASE_URL}/quiz/get-live-quiz`, {
+    credentials: 'include',
+  })
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to fetch live quiz' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
+}
+
+
+export const getLeaderboardData = async () => {
+  return ([
+        {
+          id: 1,
+          name: 'Alice',
+          avatar: 'https://i.pravatar.cc/50?img=1',
+          score: 980,
+        },
+        {
+          id: 2,
+          name: 'Bob',
+          avatar: 'https://i.pravatar.cc/50?img=2',
+          score: 920,
+        },
+        {
+          id: 3,
+          name: 'Charlie',
+          avatar: 'https://i.pravatar.cc/50?img=3',
+          score: 870,
+        },
+        {
+          id: 4,
+          name: 'David',
+          avatar: 'https://i.pravatar.cc/50?img=4',
+          score: 840,
+        },
+      ])
+    }
+    

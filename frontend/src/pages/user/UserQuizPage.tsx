@@ -1,16 +1,14 @@
 import { useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
-import * as apiAdmin from '../../apiAdmin'
+import * as apiUser from '../../apiClient'
 import { motion } from 'framer-motion'
 import NotAvailable from '../../components/NoAvailable'
-import { useAppContext } from '../../context/AppContext'
 import Loader1 from '../../components/Loader1'
 
 const socket = io('http://localhost:4004', { transports: ['websocket'] })
 
-const QuizPage = () => {
- 
+const UserQuizPage = () => {
   const {
     data: quiz,
     isLoading,
@@ -18,7 +16,7 @@ const QuizPage = () => {
     refetch,
   } = useQuery({
     queryKey: ['liveQuiz'],
-    queryFn: apiAdmin.getLiveQuiz,
+    queryFn: apiUser.getLiveQuiz,
     refetchInterval: 30000,
   })
 
@@ -28,7 +26,6 @@ const QuizPage = () => {
     Record<number, string>
   >({})
 
-  
   const [showResults, setShowResults] = useState(false)
 
   const [quizStarted, setQuizStarted] = useState<boolean>(false)
@@ -160,8 +157,8 @@ const QuizPage = () => {
     return ['A', 'B', 'C', 'D'][letterIndex] || '?'
   }
 
-  if (isLoading) return <Loader1/>
-  if (error && quiz || !quiz) return <NotAvailable />
+  if (isLoading) return <Loader1 />
+  if ((error && quiz) || !quiz) return <NotAvailable />
 
   if (showResults) {
     const score = calculateScore()
@@ -292,4 +289,4 @@ const QuizPage = () => {
   )
 }
 
-export default QuizPage
+export default UserQuizPage
