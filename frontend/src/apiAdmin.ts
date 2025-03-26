@@ -2,18 +2,16 @@ import { ForgotPasswordFormData } from './pages/admin/authentication/ForgotPassw
 import { LoginFormData } from './pages/admin/authentication/Login'
 import { RegisterFormData } from './pages/admin/authentication/Register'
 
-
-
 type AdminReturnType = {
   _id: string
-  name:string
+  name: string
   email: string
-  imageInfo: {imageUrl: string, imageId: string}
+  imageInfo: { imageUrl: string; imageId: string }
   createdAt: Date
   updatedAt: Date
 }
 
-export type QuizzesReturnType ={
+export type QuizzesReturnType = {
   _id: string
   title: string
   description: string
@@ -39,7 +37,7 @@ export const registerAdmin = async (formData: RegisterFormData) => {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({...formData}),
+    body: JSON.stringify({ ...formData }),
   })
   const body = await response.json()
   if (!response.ok) {
@@ -47,7 +45,6 @@ export const registerAdmin = async (formData: RegisterFormData) => {
   }
   return body
 }
-
 
 export const loginAdmin = async (formData: LoginFormData) => {
   const response = await fetch(`${API_BASE_URL}/auth/admin/login`, {
@@ -94,42 +91,36 @@ export const verifyAdminEmail = async (code: string) => {
   }
 }
 
-
 export const sendForgotPasswordEmail = async (
   email: ForgotPasswordFormData
 ) => {
-  const response = await fetch(
-    `${API_BASE_URL}/auth/admin/password/forgot`,
-    {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(email),
-    }
-  )
+  const response = await fetch(`${API_BASE_URL}/auth/admin/password/forgot`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(email),
+  })
   const responseBody = await response.json()
-  
+
   if (!response.ok) {
     throw new Error(responseBody.message)
   }
 }
 
-export const resetAdminPassword = async (
-  formData: FormData
-) => {
-  const response = await fetch(
-    `${API_BASE_URL}/auth/admin/password/reset`,
-    {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({code:formData.get('code'), password:formData.get('password')}),
-    }
-  )
+export const resetAdminPassword = async (formData: FormData) => {
+  const response = await fetch(`${API_BASE_URL}/auth/admin/password/reset`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      code: formData.get('code'),
+      password: formData.get('password'),
+    }),
+  })
 
   const responseBody = await response.json()
 
@@ -162,8 +153,6 @@ export const updatedAdmin = async (formData: FormData) => {
   return body
 }
 
-
-
 // QUIZ SECTION
 
 export const createQuiz = async (formData: FormData) => {
@@ -178,8 +167,6 @@ export const createQuiz = async (formData: FormData) => {
   }
 }
 
-
-
 export const getAllQuizzes = async (page: number) => {
   const response = await fetch(`${API_BASE_URL}/quiz?page=${page}`, {
     credentials: 'include',
@@ -189,11 +176,9 @@ export const getAllQuizzes = async (page: number) => {
   return body
 }
 
-
-
 export const fetchQuiz = async (id: string): Promise<QuizzesReturnType> => {
   const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
-    credentials: 'include'
+    credentials: 'include',
   })
   if (!response.ok) throw new Error('Failed to fetch quiz')
   return response.json()
@@ -219,7 +204,6 @@ export const updateQuiz = async ({
   return response.json()
 }
 
-
 export const deleteQuiz = async (id: string) => {
   const response = await fetch(`${API_BASE_URL}/quiz/${id}`, {
     method: 'DELETE',
@@ -231,25 +215,24 @@ export const deleteQuiz = async (id: string) => {
   }
 }
 
-
-export const goLive = async (id:string) => {
+export const goLive = async (id: string) => {
   const response = await fetch(`${API_BASE_URL}/quiz/go-live/${id}`, {
     method: 'PUT',
     credentials: 'include',
   })
 
   if (!response.ok) {
-   // Try to parse error message from response
-    let errorMessage = 'Failed to go live'; // Default error message
+    // Try to parse error message from response
+    let errorMessage = 'Failed to go live' // Default error message
 
     try {
-      const errorData = await response.json(); // Assuming the response is JSON
-      errorMessage = errorData.message || errorMessage; // Use API message if available
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
     } catch (error) {
-      console.error('Error parsing response:', error);
+      console.error('Error parsing response:', error)
     }
 
-    throw new Error(errorMessage);
+    throw new Error(errorMessage)
   }
 }
 
@@ -273,3 +256,4 @@ export const getLiveQuiz = async () => {
   }
   return response.json()
 }
+

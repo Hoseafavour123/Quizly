@@ -3,7 +3,9 @@ import { v2 as cloudinary } from 'cloudinary'
 import { quizSchema } from './quiz.schema'
 import catchErrors from '../utils/catchErrors'
 import appAssert from '../utils/appAssert'
-import { getSocket } from "../sockets/socket";
+import { getSocket } from '../sockets/socket'
+import CompletedQuiz from '../models/completedQuiz'
+import mongoose from 'mongoose'
 
 // Get single quiz
 export const getQuiz = catchErrors(async (req, res) => {
@@ -34,6 +36,7 @@ export const getAllQuizzes = catchErrors(async (req, res) => {
 
 // Create a Quiz
 export const createQuiz = catchErrors(async (req, res) => {
+  console.log(req.body)
   const parsedData = quizSchema.safeParse(req.body)
   if (!parsedData.success) {
     console.log(parsedData.error.errors)
@@ -42,7 +45,7 @@ export const createQuiz = catchErrors(async (req, res) => {
       .json({ message: 'Invalid input', errors: parsedData.error.errors })
   }
 
-  const { title, description, duration, questions } = parsedData.data
+  const { title, description, duration, questions, category } = parsedData.data
   const files = (req.files as Express.Multer.File[]) || []
 
   // Function to upload an image buffer to Cloudinary
@@ -86,6 +89,7 @@ export const createQuiz = catchErrors(async (req, res) => {
     title,
     description,
     duration,
+    category,
     questions: processedQuestions,
   })
 
@@ -217,40 +221,111 @@ export const deleteQuiz = catchErrors(async (req, res) => {
   return res.status(200).json({ message: 'Quiz deleted successfully!' })
 })
 
+export const submitQuiz = catchErrors(async (req, res) => {
+  console.log('Inside submit api: ', req.body)
+  const { quizId, answers, score, totalQuestions } = req.body
 
+  // Validate required fields
+  if (!quizId || !answers || score === undefined || !totalQuestions) {
+    return res.status(400).json({ message: 'All fields are required' })
+  }
 
+  // Check if quiz exists
+  const quizExists = await Quiz.findById(quizId)
+  if (!quizExists) {
+    return res.status(404).json({ message: 'Quiz not found' })
+  }
 
-export const goLive = catchErrors(async (req, res) => {
-   const { id } = req.params
-   const quiz = await Quiz.findById(id)
+  // Create and save the completed quiz
+  const completedQuiz = new CompletedQuiz({
+    userId: req.userId,
+    quizId: quizExists._id,
+    answers,
+    score,
+    totalQuestions,
+  })
 
-   if (!quiz) return res.status(404).json({ message: 'Quiz not found' })
+  await completedQuiz.save()
 
-   const liveQuiz = await Quiz.findOne({ status: 'live' })
-   if (liveQuiz)
-     return res.status(400).json({ message: 'A quiz is already live' })
-
-   quiz.status = 'live'
-   quiz.startTime = new Date()
-   await quiz.save()
-
-   const io = getSocket() // ✅ Get the io instance
-   io.emit('quiz-live', quiz) // Notify users in real-time
-
-   setTimeout(async () => {
-     quiz.status = 'closed'
-     await quiz.save()
-     io.emit('quiz-ended', { quizId: quiz._id })
-   }, quiz.duration * 60 * 1000) // Auto-close after duration
-
-   return res.json({ message: 'Quiz is live!' })
+  res
+    .status(201)
+    .json({ message: 'Quiz submitted successfully', completedQuiz })
 })
 
+export const goLive = catchErrors(async (req, res) => {
+  const { id } = req.params
+  const quiz = await Quiz.findById(id)
 
+  if (!quiz) return res.status(404).json({ message: 'Quiz not found' })
+
+  const liveQuiz = await Quiz.findOne({ status: 'live' })
+  if (liveQuiz)
+    return res.status(400).json({ message: 'A quiz is already live' })
+
+  quiz.status = 'live'
+  quiz.startTime = new Date()
+  await quiz.save()
+
+  const io = getSocket() // ✅ Get the io instance
+  io.emit('quiz-live', quiz) // Notify users in real-time
+
+  setTimeout(async () => {
+    quiz.status = 'closed'
+    await quiz.save()
+    io.emit('quiz-ended', { quizId: quiz._id })
+  }, quiz.duration * 60 * 1000) // Auto-close after duration
+
+  return res.json({ message: 'Quiz is live!' })
+})
 
 export const getLiveQuiz = catchErrors(async (req, res) => {
   const liveQuiz = await Quiz.findOne({ status: 'live' })
 
- if (!liveQuiz) return res.status(400).json({ message: 'No live quiz' })
+  if (!liveQuiz) return res.status(400).json({ message: 'No live quiz' })
   return res.json(liveQuiz)
+})
+
+
+
+
+export const getStats = catchErrors(async (req, res) => {
+  console.log(req.userId)
+  const userId = req.userId || req.params.userId || req.query.userId // Adjust based on how it's passed
+
+  appAssert(userId, 400, 'User ID is required')
+
+  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: 'Invalid user ID' })
+  }
+  
+
+  const userStats = await CompletedQuiz.find({ userId })
+ appAssert(userStats, 400, 'No quizzes found for this user')
+
+  
+  const highestScore = Math.max(...userStats.map((q) => q.score))
+  const totalQuizzesTaken = userStats.length
+
+  
+  const allScores = await CompletedQuiz.aggregate([
+    {
+      $group: {
+        _id: '$userId',
+        totalScore: { $sum: '$score' }, 
+      },
+    },
+    { $sort: { totalScore: -1 } },
+  ])
+
+ 
+  const userIndex = allScores.findIndex(
+    (user) => user._id.toString() === userId
+  )
+  const userRank = userIndex !== -1 ? userIndex + 1 : null
+
+  return res.json({
+    highestScore,
+    totalQuizzesTaken,
+    userRank,
+  })
 })

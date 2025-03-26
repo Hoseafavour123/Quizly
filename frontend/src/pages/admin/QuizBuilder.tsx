@@ -1,14 +1,14 @@
 import { useState } from 'react'
-import { SubmitHandler, useForm, Controller} from 'react-hook-form'
+import { SubmitHandler, useForm, Controller } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import * as apiAdmin from '../../apiAdmin'
 import { useAppContext } from '../../context/AppContext'
 import { abcBlock } from '../../assets/images'
 import { FloatingLabel } from 'flowbite-react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css"; // Import styles
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css' // Import styles
 
 type Question = {
   text: string
@@ -21,13 +21,24 @@ type QuizFormData = {
   title: string
   description: string
   duration: number
+  category: string
   questions: Question[]
 }
+
+const quizCategories = [
+  'General Knowledge',
+  'Science & Technolgy',
+  'Entertainment & Pop Culture',
+  'History',
+  'Sports & Fitness',
+  'Business & Finance',
+  'Health & Medicine',
+]
 
 const QuizBuilder = () => {
   const { showToast } = useAppContext()
   const navigate = useNavigate()
-  const {control, register, handleSubmit, reset } = useForm<QuizFormData>()
+  const { control, register, handleSubmit, reset } = useForm<QuizFormData>()
   const [questions, setQuestions] = useState<Question[]>([])
   const [newQuestion, setNewQuestion] = useState<Question>({
     text: '',
@@ -78,6 +89,8 @@ const QuizBuilder = () => {
     formData.append('title', data.title)
     formData.append('description', data.description)
     formData.append('duration', data.duration.toString())
+    formData.append('category', data.category)
+    console.log(data.category)
 
     // Include questions from state, not just the form
     questions.forEach((q, index) => {
@@ -119,10 +132,39 @@ const QuizBuilder = () => {
             </div>
           </div>
 
+          <div className="flex gap-5 rounded-md items-center border p-2">
+            <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
+              2
+            </div>
+            <p className="font-bold">Quiz Category: </p>
+            <div className="w-3/4"></div>
+            <Controller
+              control={control}
+              name="category"
+              render={({ field }) => (
+                <select
+                  {...field}
+                  {...register('category')}
+                  className="mt-2 p-2 border border-gray-300 rounded w-full"
+                >
+                  <option value="" disabled>
+                    Select a category
+                  </option>
+                  {quizCategories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+              )}
+              rules={{ required: 'Category is required' }}
+            />
+          </div>
+
           <div className="rounded-md items-center border p-2  mt-5">
             <div className="flex gap-5 mb-3 items-center">
               <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-                2
+                3
               </div>
               <span className="font-bold">Description:</span>
             </div>
@@ -149,7 +191,7 @@ const QuizBuilder = () => {
 
           <div className="flex gap-5 rounded-md items-center border p-2 mt-5">
             <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-              3
+              4
             </div>
             <p className="font-bold">Duration(in minutes): </p>
             <div className="">
@@ -166,7 +208,7 @@ const QuizBuilder = () => {
           <div className="gap-5 rounded-md items-center border p-2 mt-[50px]">
             <div className="flex gap-5 items-center">
               <div className="flex rounded-md items-center justify-center w-8 h-10 p-4 bg-indigo-500 text-white">
-                4
+                5
               </div>
               <p className="font-bold">Quiz Questions: </p>
             </div>
@@ -246,7 +288,7 @@ const QuizBuilder = () => {
                     image: e.target.files?.[0] || null,
                   })
                 }
-                className="p-2 border rounded mb-3 text-xs"
+                className="hidden p-2 border rounded mb-3 text-xs"
               />
             </div>
 

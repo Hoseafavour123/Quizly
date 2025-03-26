@@ -107,6 +107,8 @@ const Dashboard = () => {
         </h2>
         <Doughnut data={doughnutData} />
       </Card>
+
+      
     </div>
   )
 }

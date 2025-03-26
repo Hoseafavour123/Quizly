@@ -12,6 +12,12 @@ type UserReturnType = {
   updatedAt: Date
 }
 
+export type StatsType = {
+  highestScore: number
+  totalQuizzesTaken: number
+  userRank: number
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const register = async (formData: RegisterFormData) => {
@@ -59,15 +65,12 @@ export const logout = async () => {
 }
 
 export const verifyEmail = async (code: string) => {
-  const response = await fetch(
-    `${API_BASE_URL}/auth/email/verify/${code}`,
-    {
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    }
-  )
+  const response = await fetch(`${API_BASE_URL}/auth/email/verify/${code}`, {
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
   const responseBody = await response.json()
 
   if (!response.ok) {
@@ -78,17 +81,14 @@ export const verifyEmail = async (code: string) => {
 export const sendForgotPasswordEmail = async (
   email: ForgotPasswordFormData
 ) => {
-  const response = await fetch(
-    `${API_BASE_URL}/auth/password/forgot`,
-    {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(email),
-    }
-  )
+  const response = await fetch(`${API_BASE_URL}/auth/password/forgot`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(email),
+  })
   const responseBody = await response.json()
 
   if (!response.ok) {
@@ -97,20 +97,17 @@ export const sendForgotPasswordEmail = async (
 }
 
 export const resetPassword = async (formData: FormData) => {
-  const response = await fetch(
-    `${API_BASE_URL}/auth/password/reset`,
-    {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        code: formData.get('code'),
-        password: formData.get('password'),
-      }),
-    }
-  )
+  const response = await fetch(`${API_BASE_URL}/auth/password/reset`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      code: formData.get('code'),
+      password: formData.get('password'),
+    }),
+  })
 
   const responseBody = await response.json()
 
@@ -147,20 +144,16 @@ export const updateUser = async (
   return body
 }
 
-
-
 export const getLiveQuiz = async () => {
   console.log('fetchig live quiz...')
   const response = await fetch(`${API_BASE_URL}/quiz/get-live-quiz`, {
     credentials: 'include',
   })
   if (!response.ok) {
-    // Try to parse error message from response
-    let errorMessage = 'Failed to fetch live quiz' // Default error message
-
+    let errorMessage = 'Failed to fetch live quiz'
     try {
-      const errorData = await response.json() // Assuming the response is JSON
-      errorMessage = errorData.message || errorMessage // Use API message if available
+      const errorData = await response.json()
+      errorMessage = errorData.message || errorMessage
     } catch (error) {
       console.error('Error parsing response:', error)
     }
@@ -170,33 +163,74 @@ export const getLiveQuiz = async () => {
   return response.json()
 }
 
+export const submitQuiz = async (data: any) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/submit`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+
+  if (!response.ok) {
+    let errorMessage = 'Failed to submit'
+
+    try {
+      const errorData = await response.json()
+      errorMessage = errorData.message || errorMessage
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+}
+
+export const getStats = async (userId: string): Promise<StatsType> => {
+  const response = await fetch(`${API_BASE_URL}/quiz/get-stats/${userId}`, {
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    let errorMessage = 'Failed to fetch live quiz'
+    try {
+      const errorData = await response.json()
+      errorMessage = errorData.message || errorMessage
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
+}
 
 export const getLeaderboardData = async () => {
-  return ([
-        {
-          id: 1,
-          name: 'Alice',
-          avatar: 'https://i.pravatar.cc/50?img=1',
-          score: 980,
-        },
-        {
-          id: 2,
-          name: 'Bob',
-          avatar: 'https://i.pravatar.cc/50?img=2',
-          score: 920,
-        },
-        {
-          id: 3,
-          name: 'Charlie',
-          avatar: 'https://i.pravatar.cc/50?img=3',
-          score: 870,
-        },
-        {
-          id: 4,
-          name: 'David',
-          avatar: 'https://i.pravatar.cc/50?img=4',
-          score: 840,
-        },
-      ])
-    }
-    
+  return [
+    {
+      id: 1,
+      name: 'Alice',
+      avatar: 'https://i.pravatar.cc/50?img=1',
+      score: 980,
+    },
+    {
+      id: 2,
+      name: 'Bob',
+      avatar: 'https://i.pravatar.cc/50?img=2',
+      score: 920,
+    },
+    {
+      id: 3,
+      name: 'Charlie',
+      avatar: 'https://i.pravatar.cc/50?img=3',
+      score: 870,
+    },
+    {
+      id: 4,
+      name: 'David',
+      avatar: 'https://i.pravatar.cc/50?img=4',
+      score: 840,
+    },
+  ]
+}

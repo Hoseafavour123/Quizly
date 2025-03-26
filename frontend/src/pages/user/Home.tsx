@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAuthContext } from '../../context/AuthContext'
-import Dashboard from './TestHome'
+import Dashboard from './Dashboard1'
 
 const Home: React.FC = () => {
   const { user } = useAuthContext()

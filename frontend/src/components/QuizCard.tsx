@@ -11,6 +11,7 @@ interface QuizCardProps {
 }
 
 const QuizCard = ({ quiz }: QuizCardProps) => {
+  console.log(quiz)
   const { showToast } = useAppContext()
   const navigate = useNavigate()
 
@@ -50,6 +51,7 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
         <p className="font-bold text-xl mt-2">{quiz.title}</p>
         <p className="text-gray-400">{quiz.questions.length} Questions</p>
         <p className="text-gray-400">{quiz.duration} Minutes</p>
+        <p className="text-gray-400">{quiz.category}</p>
         <div className="flex justify-end">
           <Link
             to={`/admin/quiz-builder/${quiz._id}`}

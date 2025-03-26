@@ -1,10 +1,12 @@
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import * as apiUser from '../../apiClient'
 import { motion } from 'framer-motion'
 import NotAvailable from '../../components/NoAvailable'
 import Loader1 from '../../components/Loader1'
+import { useNavigate } from 'react-router-dom'
+import { useAuthContext } from '../../context/AuthContext'
 
 const socket = io('http://localhost:4004', { transports: ['websocket'] })
 
@@ -20,6 +22,8 @@ const UserQuizPage = () => {
     refetchInterval: 30000,
   })
 
+  const navigate = useNavigate()
+  const { user } = useAuthContext()
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState<
@@ -30,6 +34,12 @@ const UserQuizPage = () => {
 
   const [quizStarted, setQuizStarted] = useState<boolean>(false)
   const [cheatingDetectionActive, setCheatingDetectionActive] = useState(false)
+
+  const { mutate } = useMutation(apiUser.submitQuiz, {
+    onSuccess: () => {
+      navigate(`/all-quizzes`)
+    },
+  })
 
   useEffect(() => {
     socket.on('quiz-live', () => refetch())
@@ -126,7 +136,26 @@ const UserQuizPage = () => {
   }
 
   const handleSubmit = () => {
-    console.log()
+   const payload = {
+     userId: user?._id,
+     quizId: quiz._id,
+     totalQuestions: quiz.questions.length,
+     answers: {} as Record<string, string>, // Store answers as a JSON object
+     score: 0,
+   }
+
+   let correctCount = 0
+   quiz.questions.forEach((q: any, i: number) => {
+     const isCorrect = q.correctAnswer === selectedAnswers[i]
+     if (isCorrect) correctCount++
+     payload.answers[i] = selectedAnswers[i] || '' // Store selected answers
+   })
+
+   payload.score = correctCount
+   console.log(payload)
+
+   mutate(payload)
+
     sessionStorage.setItem('quizSubmitted', 'true')
     setShowResults(true)
   }

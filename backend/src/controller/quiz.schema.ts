@@ -4,6 +4,7 @@ export const quizSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters long'),
   description: z.string().optional(),
   duration: z.string().regex(/^\d+$/, 'Duration must be a number'),
+  category: z.string().min(1, 'Category must be at least 3 characters long'),
   questions: z
     .array(
       z.object({
