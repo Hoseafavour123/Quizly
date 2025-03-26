@@ -18,6 +18,15 @@ export type StatsType = {
   userRank: number
 }
 
+
+export type LeaderboardType = {
+  id: string
+  email:string
+  name: string
+  imageUrl: string
+  score: number
+}
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const register = async (formData: RegisterFormData) => {
@@ -206,31 +215,42 @@ export const getStats = async (userId: string): Promise<StatsType> => {
   return response.json()
 }
 
-export const getLeaderboardData = async () => {
-  return [
-    {
-      id: 1,
-      name: 'Alice',
-      avatar: 'https://i.pravatar.cc/50?img=1',
-      score: 980,
-    },
-    {
-      id: 2,
-      name: 'Bob',
-      avatar: 'https://i.pravatar.cc/50?img=2',
-      score: 920,
-    },
-    {
-      id: 3,
-      name: 'Charlie',
-      avatar: 'https://i.pravatar.cc/50?img=3',
-      score: 870,
-    },
-    {
-      id: 4,
-      name: 'David',
-      avatar: 'https://i.pravatar.cc/50?img=4',
-      score: 840,
-    },
-  ]
+
+export const getCompletedQuizzes = async ({ page }: { page: number }) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/completed-quizzes?page=${page}`, {
+    credentials: 'include',
+  })
+
+  if (!response.ok) {
+    let errorMessage = 'Failed to fetch quizzes'
+    try {
+      const errorData = await response.json()
+      errorMessage = errorData.message || errorMessage
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
+}
+
+export const getLeaderboardData = async (filter: string = 'all'): Promise<LeaderboardType[]> => {
+  const response = await fetch(`${API_BASE_URL}/quiz/leaderboard?filter=${filter}`, {
+    credentials:'include'
+  })
+
+ if (!response.ok) {
+   let errorMessage = 'Failed to get leaderboard data'
+   try {
+     const errorData = await response.json()
+     errorMessage = errorData.message || errorMessage
+   } catch (error) {
+     console.error('Error parsing response:', error)
+   }
+
+   throw new Error(errorMessage)
+ }
+
+  return response.json()
 }

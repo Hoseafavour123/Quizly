@@ -5,6 +5,7 @@ import catchErrors from '../utils/catchErrors'
 import appAssert from '../utils/appAssert'
 import { getSocket } from '../sockets/socket'
 import CompletedQuiz from '../models/completedQuiz'
+import UserModel from '../models/user.model'
 import mongoose from 'mongoose'
 
 // Get single quiz
@@ -33,6 +34,26 @@ export const getAllQuizzes = catchErrors(async (req, res) => {
     totalQuizzes,
   })
 })
+
+
+export const getCompletedQuizzes = catchErrors(async (req, res) => {
+  const page = parseInt(req.query.page as string || '1')
+  const limit = 10
+  const skip = (page - 1) * limit
+
+  const quizzes = await CompletedQuiz.find({ userId: req.userId })
+    .populate('quizId')
+    .skip(skip)
+    .limit(limit)
+
+   appAssert(quizzes, 404, 'No quizzes found')
+
+  const totalQuizzes = await Quiz.countDocuments({userId: req.userId})
+  const hasMore = totalQuizzes > skip + quizzes.length
+
+  return res.json({ quizzes, hasMore })
+})
+
 
 // Create a Quiz
 export const createQuiz = catchErrors(async (req, res) => {
@@ -328,4 +349,53 @@ export const getStats = catchErrors(async (req, res) => {
     totalQuizzesTaken,
     userRank,
   })
+})
+
+
+
+export const getLeaderboardData = catchErrors(async (req, res) => {
+  const filter = req.query.filter || 'all' // Default to all-time
+  const now = new Date()
+  let dateFilter = {}
+
+  if (filter === 'weekly') {
+    const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay()))
+    dateFilter = { createdAt: { $gte: startOfWeek } }
+  } else if (filter === 'monthly') {
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    dateFilter = { createdAt: { $gte: startOfMonth } }
+  }
+
+  // Aggregate user scores based on filter
+  const leaderboard = await CompletedQuiz.aggregate([
+    { $match: dateFilter }, // Apply date filter if provided
+    {
+      $group: {
+        _id: '$userId',
+        totalScore: { $sum: '$score' },
+      },
+    },
+    { $sort: { totalScore: -1 } }, // Sort descending
+    { $limit: 10 }, // Top 10 users
+  ])
+
+  // Populate user details
+  const userIds = leaderboard.map((entry) => entry._id)
+  const users: { _id: mongoose.Types.ObjectId; firstName: string; lastName: string; imageUrl?: string; email?: string }[] = await UserModel.find({ _id: { $in: userIds } }).select(
+    'firstName lastName imageUrl email'
+  )
+
+  // Merge user data with leaderboard scores
+  const leaderboardData = leaderboard.map((entry) => {
+    const user = users.find((u) => u._id.toString() === entry._id.toString())
+    return {
+      id: entry._id,
+      name: user ? `${user.firstName} ${user.lastName}` : 'Unknown User', // ✅ Fix
+      imageUrl: user?.imageUrl || '',
+      email: user?.email,
+      score: entry.totalScore,
+    }
+  })
+
+  res.json(leaderboardData)
 })

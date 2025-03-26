@@ -18,7 +18,8 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
   const mutation = useMutation(apiAdmin.goLive, {
     onSuccess: () => {
       showToast({ message: 'Quiz is live', type: 'SUCCESS' })
-      navigate('/admin/live-quiz')
+      //navigate('/admin/live-quiz')
+      window.location.reload()
       console.log('Quiz is live')
     },
     onError:(err: Error) => {
