@@ -12,11 +12,13 @@ type UserReturnType = {
   updatedAt: Date
 }
 
-export type StatsType = {
+export interface StatsData {
   highestScore: number
   totalQuizzesTaken: number
-  userRank: number
+  userRank: number | null
+  formattedStats: { day: string; score: number; quizzes: number }[]
 }
+
 
 
 export type LeaderboardType = {
@@ -196,8 +198,8 @@ export const submitQuiz = async (data: any) => {
   }
 }
 
-export const getStats = async (userId: string): Promise<StatsType> => {
-  const response = await fetch(`${API_BASE_URL}/quiz/get-stats/${userId}`, {
+export const getStats = async (filter: string): Promise<StatsData> => {
+  const response = await fetch(`${API_BASE_URL}/user/get-stats?filter=${filter}`, {
     credentials: 'include',
   })
 

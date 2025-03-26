@@ -8,6 +8,7 @@ export interface UserDocument extends mongoose.Document {
     lastName:string;
     verified: boolean;
     imageUrl: string;
+    imageInfo: { imageUrl: string; imageId: string };
     createdAt: Date;
     updatedAt: Date;
     comparePassword: (password: string) => Promise<boolean>;
@@ -21,7 +22,10 @@ const userSchema = new mongoose.Schema<UserDocument>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     verified: { type: Boolean, default: false },
-    imageUrl:{type: String, default: ''}
+    imageUrl:{type: String, default: ''},
+    imageInfo: {
+      imageUrl: { type: String, default: '' },
+      imageId: { type: String, default: ''}}
   },
   { timestamps: true }
 )

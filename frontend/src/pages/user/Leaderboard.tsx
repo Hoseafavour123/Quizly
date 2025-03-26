@@ -51,7 +51,7 @@ export default function Leaderboard() {
                 >
                   {index === 0 && <ConfettiEffect />}{' '}
                   {/* Celebration for 1st place */}
-                  <div className="flex items-center space-x-4">
+                  <div className="flex items-center justify-evenly space-x-4">
                     <span
                       className={`text-2xl font-bold ${
                         index === 0 ? 'text-yellow-200' : 'text-blue-400'
@@ -59,16 +59,18 @@ export default function Leaderboard() {
                     >
                       #{index + 1}
                     </span>
-                  
+
                     <img
                       src={user.imageUrl || userIcon}
                       alt={typeof user.name === 'string' ? user.name : ''}
                       className="w-12 h-12 rounded-full border-2 border-white"
                     />
-                    <p className="text-lg hover:underline cursor-pointer">
-                      {user.name}
-                    </p>
-                    <small>{user.email}</small>
+                    <div className='flex flex-col items-center'>
+                      <p className="text-lg hover:underline cursor-pointer">
+                        {user.name}
+                      </p>
+                      <small>{user.email}</small>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <p className="text-xl font-semibold text-yellow-400">

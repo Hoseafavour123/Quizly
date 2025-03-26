@@ -130,7 +130,7 @@ export const resetAdminPassword = async (formData: FormData) => {
 }
 
 export const getAdmin = async (): Promise<AdminReturnType> => {
-  const response = await fetch(`${API_BASE_URL}/admin/user`, {
+  const response = await fetch(`${API_BASE_URL}/admin`, {
     credentials: 'include',
   })
   const body = await response.json()
@@ -257,3 +257,24 @@ export const getLiveQuiz = async () => {
   return response.json()
 }
 
+
+export const getAdminStats = async () => {
+  const response = await fetch(`${API_BASE_URL}/admin/get-stats`, {
+    credentials: 'include',
+  })
+
+ if (!response.ok) {
+   // Try to parse error message from response
+   let errorMessage = 'Failed to get admin stats' // Default error message
+
+   try {
+     const errorData = await response.json() // Assuming the response is JSON
+     errorMessage = errorData.message || errorMessage // Use API message if available
+   } catch (error) {
+     console.error('Error parsing response:', error)
+   }
+
+   throw new Error(errorMessage)
+ }
+ return response.json()
+}

@@ -49,7 +49,7 @@ app.use('/auth', authUserRoutes)
 app.use('/auth/admin', authAdminRoutes)
 
 app.use('/user', authenticate, userRoutes)
-app.use('/admin/user', authenticate, adminRoutes)
+app.use('/admin', authenticate, adminRoutes)
 app.use('/sessions', authenticate, sessionRoutes)
 
 app.use('/quiz', authenticate, QuizRoutes)

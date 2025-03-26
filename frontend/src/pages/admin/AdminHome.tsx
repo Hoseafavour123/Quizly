@@ -1,18 +1,10 @@
 import React from 'react'
-import { useAdminAuthContext } from '../../context/AdminAuthContext'
+import AdminDashboard from './AdminDashboard'
 
 const AdminHome: React.FC = () => {
-  const { admin } = useAdminAuthContext()
   return (
     <div>
-      <h1>
-        Welcome Admin{' '}
-        <span className="text-indigo-600 font-montserrat">
-          {' '}
-          {admin?.name}
-        </span>{' '}
-        to the Admin Home Page
-      </h1>
+    <AdminDashboard/>
     </div>
   )
 }

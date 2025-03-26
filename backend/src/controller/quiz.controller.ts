@@ -35,9 +35,8 @@ export const getAllQuizzes = catchErrors(async (req, res) => {
   })
 })
 
-
 export const getCompletedQuizzes = catchErrors(async (req, res) => {
-  const page = parseInt(req.query.page as string || '1')
+  const page = parseInt((req.query.page as string) || '1')
   const limit = 10
   const skip = (page - 1) * limit
 
@@ -46,14 +45,13 @@ export const getCompletedQuizzes = catchErrors(async (req, res) => {
     .skip(skip)
     .limit(limit)
 
-   appAssert(quizzes, 404, 'No quizzes found')
+  appAssert(quizzes, 404, 'No quizzes found')
 
-  const totalQuizzes = await Quiz.countDocuments({userId: req.userId})
+  const totalQuizzes = await Quiz.countDocuments({ userId: req.userId })
   const hasMore = totalQuizzes > skip + quizzes.length
 
   return res.json({ quizzes, hasMore })
 })
-
 
 // Create a Quiz
 export const createQuiz = catchErrors(async (req, res) => {
@@ -307,52 +305,6 @@ export const getLiveQuiz = catchErrors(async (req, res) => {
 })
 
 
-
-
-export const getStats = catchErrors(async (req, res) => {
-  console.log(req.userId)
-  const userId = req.userId || req.params.userId || req.query.userId // Adjust based on how it's passed
-
-  appAssert(userId, 400, 'User ID is required')
-
-  if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ message: 'Invalid user ID' })
-  }
-  
-
-  const userStats = await CompletedQuiz.find({ userId })
- appAssert(userStats, 400, 'No quizzes found for this user')
-
-  
-  const highestScore = Math.max(...userStats.map((q) => q.score))
-  const totalQuizzesTaken = userStats.length
-
-  
-  const allScores = await CompletedQuiz.aggregate([
-    {
-      $group: {
-        _id: '$userId',
-        totalScore: { $sum: '$score' }, 
-      },
-    },
-    { $sort: { totalScore: -1 } },
-  ])
-
- 
-  const userIndex = allScores.findIndex(
-    (user) => user._id.toString() === userId
-  )
-  const userRank = userIndex !== -1 ? userIndex + 1 : null
-
-  return res.json({
-    highestScore,
-    totalQuizzesTaken,
-    userRank,
-  })
-})
-
-
-
 export const getLeaderboardData = catchErrors(async (req, res) => {
   const filter = req.query.filter || 'all' // Default to all-time
   const now = new Date()
@@ -381,7 +333,13 @@ export const getLeaderboardData = catchErrors(async (req, res) => {
 
   // Populate user details
   const userIds = leaderboard.map((entry) => entry._id)
-  const users: { _id: mongoose.Types.ObjectId; firstName: string; lastName: string; imageUrl?: string; email?: string }[] = await UserModel.find({ _id: { $in: userIds } }).select(
+  const users: {
+    _id: mongoose.Types.ObjectId
+    firstName: string
+    lastName: string
+    imageUrl?: string
+    email?: string
+  }[] = await UserModel.find({ _id: { $in: userIds } }).select(
     'firstName lastName imageUrl email'
   )
 
@@ -390,7 +348,7 @@ export const getLeaderboardData = catchErrors(async (req, res) => {
     const user = users.find((u) => u._id.toString() === entry._id.toString())
     return {
       id: entry._id,
-      name: user ? `${user.firstName} ${user.lastName}` : 'Unknown User', // ✅ Fix
+      name: user ? `${user.firstName}` : 'Unknown User', // ✅ Fix
       imageUrl: user?.imageUrl || '',
       email: user?.email,
       score: entry.totalScore,

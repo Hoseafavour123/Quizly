@@ -1,12 +1,12 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {
   FaTimes,
   FaBrain,
   FaTrophy,
   FaChartBar,
   FaCog,
-  FaEdit,
   FaQuestion,
+  FaBroadcastTower
 } from 'react-icons/fa'
 
 type SidebarProps = {
@@ -51,8 +51,8 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
               />
               <SidebarLink
                 to="/live-quiz"
-                icon={<FaEdit />}
-                label="Take a Quiz"
+                icon={<FaBroadcastTower/>}
+                label="Live Quiz"
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
@@ -67,12 +67,6 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 label="Leaderboard"
                 toggleSidebar={toggleSidebar}
               />
-              {/* <SidebarLink
-                to="/statistics"
-                icon={<FaChartBar />}
-                label="Statistics"
-                toggleSidebar={toggleSidebar}
-              /> */}
               <SidebarLink
                 to="/settings"
                 icon={<FaCog />}
@@ -95,7 +89,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
   )
 }
 
-// Sidebar Link Component
+// Sidebar Link Component with Active State
 const SidebarLink = ({
   to,
   icon,
@@ -107,10 +101,17 @@ const SidebarLink = ({
   label: string
   toggleSidebar: () => void
 }) => {
+  const location = useLocation()
+  const isActive = location.pathname === to
+
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 p-3 hover:bg-neutral-700 active:bg-neutral-600 rounded-md text-sm transition duration-200"
+      className={`flex items-center gap-3 p-3 rounded-md text-sm transition duration-200 ${
+        isActive
+          ? 'bg-indigo-600 text-white font-semibold'
+          : 'hover:bg-neutral-700 active:bg-neutral-600'
+      }`}
       onClick={toggleSidebar}
     >
       {icon} <span>{label}</span>

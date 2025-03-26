@@ -71,7 +71,7 @@ const MyQuizzes = () => {
             <motion.div
               key={quiz._id}
               whileHover={{ scale: 1.05 }}
-              className="bg-neutral-900 p-5 rounded-lg shadow-lg hover:shadow-indigo-500/50 transition"
+              className="cursor-pointer bg-neutral-900 p-5 rounded-lg shadow-lg hover:shadow-indigo-500/50 transition"
             >
               <h2 className="text-xl font-semibold mb-2">
                 {quiz.quizId.title}
@@ -90,12 +90,11 @@ const MyQuizzes = () => {
                   <span className="text-gray-400">{quiz.quizId.status}</span>
                 )}
 
-                <Link
-                  to={`/quiz/${quiz._id}`}
-                  className="px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
+                <button
+                  className="cursor-default px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
                 >
-                  {quiz.status === 'Completed' ? 'Retake' : 'Start'}
-                </Link>
+                  {quiz.status === 'Completed' ? 'Retake' : 'Completed'}
+                </button>
               </div>
             </motion.div>
           )

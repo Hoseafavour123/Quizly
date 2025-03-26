@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createQuiz, deleteQuiz, getAllQuizzes, getCompletedQuizzes, getLeaderboardData, getLiveQuiz, getQuiz,  getStats,  goLive,  submitQuiz,  updateQuiz } from "../controller/quiz.controller";
+import { createQuiz, deleteQuiz, getAllQuizzes, getCompletedQuizzes, getLeaderboardData, getLiveQuiz, getQuiz,  goLive,  submitQuiz,  updateQuiz } from "../controller/quiz.controller";
 import { uploadMiddleware } from "../middleware/uploadMiddleware";
 
 const router = Router()
@@ -7,7 +7,6 @@ const router = Router()
 
 
 router.get('/get-live-quiz', getLiveQuiz)
-router.get('/get-stats/:userId', getStats)
 router.get('/completed-quizzes', getCompletedQuizzes)
 router.get('/leaderboard', getLeaderboardData)
 router.post('/submit', submitQuiz)
