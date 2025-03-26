@@ -25,51 +25,53 @@ export const deleteUser = catchErrors(async (req, res) => {
 })
 
 // Update a user
-export const updateUser = catchErrors(async (req, res) => {
-  const { firstName, lastName, password, email, ...restData } =
-    req.body
+export const updateUser = catchErrors(
+  async (req, res) => {
+    const { firstName, lastName, password, email, ...restData } = req.body
 
-  const user = await UserModel.findById(req.userId)
-  appAssert(user, NOT_FOUND, 'Volunteer not found')
-  
-  let imageInfo = user.imageInfo
+    const user = await UserModel.findById(req.userId)
+    appAssert(user, NOT_FOUND, 'User not found')
 
-  if (req.file) {
-    if (imageInfo?.imageId) {
-      await cloudinary.v2.uploader.destroy(imageInfo.imageId)
+    let imageInfo = user.imageInfo
+
+    if (req.file) {
+      if (imageInfo?.imageId) {
+        await cloudinary.v2.uploader.destroy(imageInfo.imageId)
+      }
+      const result = await cloudinary.v2.uploader.upload(req.file.path, {
+        folder: 'users',
+      })
+
+      imageInfo = {
+        imageUrl: result.secure_url,
+        imageId: result.public_id,
+      }
     }
-    const result = await cloudinary.v2.uploader.upload(req.file.path, {
-      folder: 'users',
-    })
 
-    imageInfo = {
-      imageUrl: result.secure_url,
-      imageId: result.public_id,
+    const updateFields: Partial<typeof user> = {
+      firstName,
+      lastName,
+      email,
+      ...restData,
+      ...(imageInfo && { imageInfo }), 
     }
+
+    if (password) {
+    updateFields.password = await hashValue(password);
   }
 
-  const updateFields: Partial<typeof user> = {
-    firstName,
-    lastName,
-    email,
-    ...restData,
-    ...(imageInfo && { imageInfo }),
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { _id: req.userId },
+      updateFields,
+      { new: true, runValidators: true }
+    )
+
+    appAssert(updatedUser, NOT_FOUND, 'User not found')
+
+    return res.status(200).json({ volunteer: updatedUser })
   }
+)
 
-  if (password) {
-    updateFields.password = await hashValue(password)
-  }
-
-  const updatedUser = await UserModel.findOneAndUpdate(
-    { _id: req.userId },
-    updateFields,
-    { new: true, runValidators: true }
-  )
-
-  appAssert(updatedUser, NOT_FOUND, 'Volunteer not found')
-
-  return res.status(200).json({ user: updatedUser })
-})
 
 
 

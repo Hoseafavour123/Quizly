@@ -68,7 +68,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
-                to="/settings"
+                to="/user/settings"
                 icon={<FaCog />}
                 label="Settings"
                 toggleSidebar={toggleSidebar}

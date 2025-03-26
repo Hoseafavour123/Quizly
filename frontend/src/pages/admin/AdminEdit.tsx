@@ -15,7 +15,7 @@ export interface UpdateAdminFormData {
 }
 
 
-const AdminEdit: React.FC = () => {
+const UpdateAdminProfile: React.FC = () => {
   const navigate = useNavigate()
   const { admin } = useAdminAuthContext()
   const { showToast } = useAppContext()
@@ -24,7 +24,7 @@ const AdminEdit: React.FC = () => {
     {
       onSuccess: () => {
         showToast({ message: 'Profile updated successfully', type: 'SUCCESS' })
-        navigate('/admin/profile')
+        navigate('/admin')
         window.location.reload()
       },
       onError: (err: Error) => {
@@ -129,4 +129,4 @@ const AdminEdit: React.FC = () => {
     </div>
   )
 }
-export default AdminEdit
+export default UpdateAdminProfile

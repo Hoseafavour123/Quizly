@@ -72,7 +72,7 @@ const AvatarPopover: React.FC = () => {
           {/* Action Buttons */}
           <div className="flex flex-col space-y-2">
             <button className="text-sm text-white w-full text-left px-2 py-1 hover:text-black hover:bg-white rounded">
-              <Link to={'/profile'} className="w-full">
+              <Link to={'/user/settings'} className="w-full">
                 Profile
               </Link>
             </button>

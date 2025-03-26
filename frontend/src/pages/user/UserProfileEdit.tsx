@@ -1,4 +1,4 @@
-import React from 'react'
+ import React from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import * as apiClient from '../../apiClient'
@@ -13,9 +13,10 @@ export interface EditFormData {
   profileImage: FileList | null
 }
 
-const UserEdit: React.FC = () => {
+const UpdateUserProfile: React.FC = () => {
   const { user } = useAuthContext()
   const { showToast } = useAppContext()
+  
   const { mutate, isLoading } = useMutation(apiClient.updateUser, {
     onSuccess: () => {
       showToast({ message: 'Profile updated successfully', type: 'SUCCESS' })
@@ -54,6 +55,8 @@ const UserEdit: React.FC = () => {
     <div className="flex items-center justify-center font-montserrat mx-auto max-md:flex-col">
       <div className="w-[40%] mt-10 p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
+      
+        
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="md:flex justify-between">
             <div>
@@ -106,7 +109,7 @@ const UserEdit: React.FC = () => {
             )}
           </div>
 
-          <div>
+          <div className=''>
             <label className="block text-sm font-medium text-gray-700">
               Profile Image
             </label>
@@ -133,4 +136,4 @@ const UserEdit: React.FC = () => {
     </div>
   )
 }
-export default UserEdit
+export default UpdateUserProfile

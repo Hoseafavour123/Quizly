@@ -10,7 +10,7 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         <button className="lg:hidden text-black" onClick={toggleSidebar}>
           <HiOutlineMenuAlt3 size={24} />
         </button>
-        <div className="relative md:block hidden">
+        <div className="relative hidden">
           <HiOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600" />
           <input
             type="text"

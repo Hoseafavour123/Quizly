@@ -1,7 +1,6 @@
 import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from "react"
 import { motion } from "framer-motion"
 import { FaStar } from "react-icons/fa"
-import { Link } from "react-router-dom"
 import { useQuery } from "react-query"
 import * as apiUser from '../../apiClient'
 import Loader1 from "../../components/Loader1"

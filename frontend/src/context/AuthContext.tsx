@@ -25,7 +25,7 @@ export const useAuthContext = () => {
   const context = useContext(AuthContext)
   if (!context) {
     throw new Error(
-      'useAuthContext must be used within a VolunteerAuthProvider'
+      'useAuthContext must be used within a UserAuthProvider'
     )
   }
   return context

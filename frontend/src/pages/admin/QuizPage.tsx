@@ -4,7 +4,6 @@ import { io } from 'socket.io-client'
 import * as apiAdmin from '../../apiAdmin'
 import { motion } from 'framer-motion'
 import NotAvailable from '../../components/NoAvailable'
-import { useAppContext } from '../../context/AppContext'
 import Loader1 from '../../components/Loader1'
 
 const socket = io('http://localhost:4004', { transports: ['websocket'] })

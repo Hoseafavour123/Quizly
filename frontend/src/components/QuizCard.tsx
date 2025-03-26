@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link} from 'react-router-dom'
 import { FaEdit } from 'react-icons/fa'
 import DeleteQuizButton from './buttons/DeleteQuiz'
 import { useModal } from '../context/ModalContext'
@@ -13,7 +13,6 @@ interface QuizCardProps {
 const QuizCard = ({ quiz }: QuizCardProps) => {
   console.log(quiz)
   const { showToast } = useAppContext()
-  const navigate = useNavigate()
 
   const mutation = useMutation(apiAdmin.goLive, {
     onSuccess: () => {

@@ -141,7 +141,7 @@ export const getAdmin = async (): Promise<AdminReturnType> => {
 }
 
 export const updatedAdmin = async (formData: FormData) => {
-  const response = await fetch(`${API_BASE_URL}/admin/user/update`, {
+  const response = await fetch(`${API_BASE_URL}/admin/update`, {
     method: 'PUT',
     credentials: 'include',
     body: formData,

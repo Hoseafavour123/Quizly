@@ -12,6 +12,7 @@ import UserProfile from './pages/user/UserProfile'
 import UserEdit from './pages/user/UserProfileEdit'
 import MainUserLayout from './components/user/MainLayout'
 import UserQuizPage from './pages/user/UserQuizPage'
+import UpdateUserProfile from './pages/user/UserProfileEdit'
 
 import { AnimatePresence } from 'framer-motion'
 import AnimatedLayout from './components/animatesThemes/PageTransitions'
@@ -36,6 +37,7 @@ import QuizPage from './pages/admin/QuizPage'
 import MyQuizzes from './pages/user/MyQuizzes'
 import Statistics from './pages/user/Statistics'
 import Leaderboard from './pages/user/Leaderboard'
+import UpdateAdminProfile from './pages/admin/AdminEdit'
 
 function App() {
   return (
@@ -56,10 +58,11 @@ function App() {
                 <Route index element={<UserHome />} />
                 <Route path="/profile" element={<UserProfile />} />
                 <Route path="/profile/edit" element={<UserEdit />} />
-                <Route path='/live-quiz' element={<UserQuizPage/>}/>
-                <Route path='/my-quizzes'  element={<MyQuizzes/>}/>
-                <Route path='/statistics' element={<Statistics/>}/>
-                <Route path='/leaderboard' element={<Leaderboard/>}/>
+                <Route path="/live-quiz" element={<UserQuizPage />} />
+                <Route path="/my-quizzes" element={<MyQuizzes />} />
+                <Route path="/statistics" element={<Statistics />} />
+                <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/user/settings" element={<UpdateUserProfile />} />
               </Route>
             </Route>
 
@@ -69,13 +72,6 @@ function App() {
             <Route path="/password/reset" element={<ResetPassword />} />
             <Route path="/verify-message" element={<VerifyEmailMessage />} />
             <Route path="/email/verify/:code" element={<VerifyUserEmail />} />
-
-
-
-
-
-
-
 
             {/* Admin Routes */}
 
@@ -100,7 +96,11 @@ function App() {
                   element={<UpdateQuiz />}
                 />
                 <Route path="/admin/all-quizzes" element={<AdminQuizList />} />
-                <Route path='/admin/live-quiz' element={<QuizPage/>}/>
+                <Route path="/admin/live-quiz" element={<QuizPage />} />
+                <Route
+                  path="/admin/settings"
+                  element={<UpdateAdminProfile />}
+                />
               </Route>
             </Route>
 

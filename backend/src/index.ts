@@ -1,4 +1,4 @@
-import express from 'express'
+import express, {Request, Response} from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
 import errorHandler from './middleware/errorHandler'
@@ -15,6 +15,7 @@ import morgan from 'morgan'
 import cloudinary from 'cloudinary'
 import { createServer } from 'http';
 import { initSocket } from "./sockets/socket"; //  Import the socket initializer
+import path from 'path'
 
 dotenv.config()
 
@@ -45,6 +46,8 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan('dev'))
 
+app.use(express.static(path.join(__dirname, "../../frontend/dist")))
+
 app.use('/auth', authUserRoutes)
 app.use('/auth/admin', authAdminRoutes)
 
@@ -53,6 +56,11 @@ app.use('/admin', authenticate, adminRoutes)
 app.use('/sessions', authenticate, sessionRoutes)
 
 app.use('/quiz', authenticate, QuizRoutes)
+
+
+app.use('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/../../frontend/dist/index.html'))
+ })
 
 app.use(errorHandler)
 

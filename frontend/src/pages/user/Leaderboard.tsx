@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 import { motion, AnimatePresence } from 'framer-motion'
-import { FaCrown, FaShareAlt } from 'react-icons/fa'
+import { FaCrown } from 'react-icons/fa'
 import { useState } from 'react'
 import Filters from './Filters'
 import * as apiUser from '../../apiClient'
