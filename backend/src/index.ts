@@ -50,7 +50,6 @@ app.use(morgan('dev'))
 
 app.use('*', express.static(path.join(__dirname, '../../frontend/dist')))
 
-
 app.use('/auth', authUserRoutes)
 app.use('/auth/admin', authAdminRoutes)
 
