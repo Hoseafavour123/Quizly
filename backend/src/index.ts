@@ -7,6 +7,7 @@ import authAdminRoutes from './routes/authAdmin.route'
 import userRoutes from './routes/user.route'
 import adminRoutes from './routes/admin.route'
 import QuizRoutes from './routes/quiz.route'
+import paymentRoute from './routes/payment.route'
 import sessionRoutes from './routes/session.route'
 import connectDB from './config/db'
 import cookieParser from 'cookie-parser'
@@ -46,7 +47,9 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan('dev'))
 
-app.use(express.static(path.join(__dirname, "../../frontend/dist")))
+
+app.use('*', express.static(path.join(__dirname, '../../frontend/dist')))
+
 
 app.use('/auth', authUserRoutes)
 app.use('/auth/admin', authAdminRoutes)
@@ -57,12 +60,13 @@ app.use('/sessions', authenticate, sessionRoutes)
 
 app.use('/quiz', authenticate, QuizRoutes)
 
-
-app.use('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname + '/../../frontend/dist/index.html'))
- })
+app.use('/payment', authenticate, paymentRoute)
 
 app.use(errorHandler)
+app.use('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/../../frontend/dist/index.html'))
+})
+
 
 httpServer.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`)
