@@ -38,7 +38,7 @@ export const sendMail = async (options: OptionType) => {
   } as any)
 
   const mailOptions: MailOptionType = {
-    from: `"Quizly" <hoseafavour123@gmail.com>`,
+    from: `"Quizver" <hoseafavour123@gmail.com>`,
     to: options.email,
     subject: options.subject,
     html: options.html,

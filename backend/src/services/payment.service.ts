@@ -2,8 +2,11 @@ import Payment from '../models/payment.model'
 import _ from 'lodash'
 import {initializePayment, verifyPayment, PaymentForm} from '../utils/payments/payment'
 import appAssert from '../utils/appAssert'
+import mongoose from 'mongoose'
 
 interface PaymentData {
+  userId: mongoose.Types.ObjectId
+  quizId: mongoose.Types.ObjectId
   amount: number
   email: string
   full_name: string
@@ -17,7 +20,11 @@ interface VerifyPaymentResponse {
     amount: number
     status: 'pending' | 'success' | 'failed'
     customer: { email: string }
-    metadata: { full_name: string }
+    metadata: {
+      full_name: string
+      quizId: any
+      userId: any
+}
   }
 }
 
@@ -27,10 +34,10 @@ class PaymentService {
       const form: PaymentForm = {
           amount: data.amount * 100, // Convert to kobo (smallest unit for Paystack)
           email: data.email,
-          metadata: { full_name: data.full_name },
-          callback_url: 'http://localhost:4004/payment/verify'
+          metadata: {full_name: data.full_name, quizId: data.quizId, userId: data.userId },
+          callback_url: 'http://localhost:5173/payment/verify'
       }
-      form.metadata = { full_name: form.metadata?.full_name || '' }
+      form.metadata = {full_name: data.full_name, quizId: form.metadata?.quizId, userId: form.metadata?.userId }
       form.amount *= 100 // Convert to kobo (smallest unit for Paystack)
 
       const response = await initializePayment(form)
@@ -53,13 +60,15 @@ class PaymentService {
 
       const { reference: paymentReference, amount, status } = response.data
       const { email } = response.data.customer
-      const full_name = response.data.metadata.full_name
-
+      const { userId, quizId, full_name } = response.data.metadata
+    
       const newPayment = new Payment({
         reference: paymentReference,
-        amount,
-        email,
         full_name,
+        amount: amount / 100,
+        email,
+        quizId,
+        userId,
         status,
       })
       await newPayment.save()

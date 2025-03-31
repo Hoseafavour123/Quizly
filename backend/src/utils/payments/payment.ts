@@ -1,5 +1,6 @@
 import axios from 'axios'
 import dotenv from 'dotenv'
+import mongoose from 'mongoose'
 
 dotenv.config()
 
@@ -9,7 +10,7 @@ export interface PaymentForm {
   callback_url: string
   amount: number
   email: string
-  metadata?: { full_name: string }
+  metadata?: { full_name: string, quizId?: mongoose.Types.ObjectId, userId?: mongoose.Types.ObjectId }
 }
 
 export const initializePayment = async (form: PaymentForm): Promise<any> => {

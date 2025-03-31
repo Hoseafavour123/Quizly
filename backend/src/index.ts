@@ -15,8 +15,9 @@ import { authenticate } from './middleware/authenticate'
 import morgan from 'morgan'
 import cloudinary from 'cloudinary'
 import { createServer } from 'http';
-import { initSocket } from "./sockets/socket"; //  Import the socket initializer
-import path from 'path'
+import { initSocket } from "./sockets/socket";
+import bodyParser from 'body-parser'
+
 
 dotenv.config()
 
@@ -43,12 +44,12 @@ cloudinary.v2.config({
 
 app.use(express.json())
 app.use(cookieParser())
+app.use(bodyParser.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use(morgan('dev'))
 
-
-app.use('*', express.static(path.join(__dirname, '../../frontend/dist')))
+// app.use('*', express.static(path.join(__dirname, '../../frontend/dist')))
 
 app.use('/auth', authUserRoutes)
 app.use('/auth/admin', authAdminRoutes)
@@ -62,14 +63,15 @@ app.use('/quiz', authenticate, QuizRoutes)
 app.use('/payment', authenticate, paymentRoute)
 
 app.use(errorHandler)
-app.use('*', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname + '/../../frontend/dist/index.html'))
-})
+// app.use('*', (req: Request, res: Response) => {
+//   res.sendFile(path.join(__dirname + '/../../frontend/dist/index.html'))
+// })
 
 
 httpServer.listen(port, async () => {
   console.log(`Server is running on http://localhost:${port}`)
   await connectDB()
 })
+
 
 export default app

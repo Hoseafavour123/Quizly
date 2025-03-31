@@ -11,13 +11,11 @@ interface QuizCardProps {
 }
 
 const QuizCard = ({ quiz }: QuizCardProps) => {
-  console.log(quiz)
   const { showToast } = useAppContext()
 
   const mutation = useMutation(apiAdmin.goLive, {
     onSuccess: () => {
       showToast({ message: 'Quiz is live', type: 'SUCCESS' })
-      //navigate('/admin/live-quiz')
       window.location.reload()
       console.log('Quiz is live')
     },
@@ -26,6 +24,18 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
       console.log(err.message)
     }
   })
+
+  const mutatePay = useMutation(apiAdmin.notifyUsersForPayment, {
+    onSuccess: () => {
+      showToast({ message: 'Payment notification sent', type: 'SUCCESS' })
+      window.location.reload()
+    },
+    onError:(err: Error) => {
+      showToast({ message: err.message, type: 'ERROR' })
+      console.log(err.message)
+    }
+  })
+
   const { showModal } = useModal()
   const openModal = () => {
     showModal({
@@ -38,14 +48,56 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
       },
     })
   }
+
+  const openPaymentModal = () => {
+    showModal({
+      title: 'Notify for Payment',
+      content: 'Are you sure you want to notify all users for payment?',
+      confirmText: 'Yes',
+      cancelText: 'No',
+      onConfirm: () => {
+        mutatePay.mutate(quiz._id)
+      },
+    })
+  }
+
+
   return (
     <>
       <div className="p-3 rounded-md border border-gray-200 shadow-md bg-white">
-        <div className={`${quiz.status == 'draft' ? 'bg-yellow-200': `${quiz.status == 'live' ? 'bg-green-300': 'bg-gray-300'}`} flex items-center justify-center bg-indigo-500 h-[200px] w-full`}>
-          <div className="rounded-full animate-pulse w-14 h-14 bg-black flex items-center justify-center">
-            <div className="p-6 text-white rounded-full">
-              <button onClick={openModal}> {quiz.status == 'draft' ? 'Go live': <>{quiz.status == 'live' ? 'Active': 'Closed'}</>}</button>
-            </div>
+        <div
+          className={`${
+            quiz.status == 'draft'
+              ? 'bg-yellow-200'
+              : `${quiz.status == 'live' ? 'bg-green-300' : 'bg-gray-300'}`
+          } flex items-center justify-center  h-[200px] w-full`}
+        >
+          <div className="bg-black p-2 rounded-md flex items-center justify-center text-white">
+            <button
+              disabled={quiz.status == 'closed'}
+              onClick={openModal}
+              className={`${
+                quiz.status == 'draft'
+                  ? 'bg-purple-500'
+                  : quiz.status == 'live'
+                  ? 'bg-green-500'
+                  : 'bg-gray-500'
+              } p-1 rounded-md text-white`}
+            >
+              {' '}
+              {quiz.status == 'draft' ? (
+                'Go live'
+              ) : (
+                <>{quiz.status == 'live' ? 'Active' : 'Closed'}</>
+              )}
+            </button>
+          </div>
+
+          <div className={`${quiz.status !== 'draft' && 'hidden'} bg-black p-2 rounded-md flex items-center justify-center text-white`}>
+            <button onClick={openPaymentModal} className='bg-yellow-500 p-1 rounded-md text-white'>
+              {' '}
+              {quiz.status == 'draft' ? 'Notify for Payment' : <>{''}</>}
+            </button>
           </div>
         </div>
         <p className="font-bold text-xl mt-2">{quiz.title}</p>

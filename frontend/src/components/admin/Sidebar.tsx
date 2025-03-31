@@ -50,13 +50,18 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
+                to="/admin/quiz-builder"
+                icon={<FaEdit />}
+                label="Quiz Builder"
+                toggleSidebar={toggleSidebar} />
+              <SidebarLink
                 to="/admin/live-quiz"
                 icon={<FaEdit />}
-                label="Create Quiz"
+                label="Live Quiz"
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
-                to="/admin/quiz-builder"
+                to="/admin/all-quizzes"
                 icon={<FaQuestion />}
                 label="Manage Quizzes"
                 toggleSidebar={toggleSidebar}

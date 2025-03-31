@@ -2,6 +2,7 @@ import { useMutation, useQuery } from 'react-query'
 import { useEffect, useState } from 'react'
 import { io } from 'socket.io-client'
 import * as apiUser from '../../apiClient'
+import * as apiAdmin from '../../apiAdmin'
 import { motion } from 'framer-motion'
 import NotAvailable from '../../components/NoAvailable'
 import Loader1 from '../../components/Loader1'
@@ -11,6 +12,7 @@ import { useAuthContext } from '../../context/AuthContext'
 const socket = io('http://localhost:4004', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
+ 
   const {
     data: quiz,
     isLoading,
@@ -20,6 +22,12 @@ const UserQuizPage = () => {
     queryKey: ['liveQuiz'],
     queryFn: apiUser.getLiveQuiz,
     refetchInterval: 30000,
+  })
+
+  const { data: paidQuiz, isLoading:isPaidQuizLoading } = useQuery({
+    queryKey: ['isQuizPaidFor'],
+    queryFn: () => apiAdmin.isQuizPaidFor(quiz?._id!),
+    enabled: !!quiz?._id,
   })
 
   const navigate = useNavigate()
@@ -37,7 +45,7 @@ const UserQuizPage = () => {
 
   const { mutate } = useMutation(apiUser.submitQuiz, {
     onSuccess: () => {
-      navigate(`/all-quizzes`)
+      navigate(`/my-quizzes`)
     },
   })
 
@@ -175,8 +183,7 @@ const UserQuizPage = () => {
       (score: number, question: { correctAnswer: string }, index: number) => {
         const optionLetter = getOptionLetter(index, selectedAnswers[index])
         return optionLetter === question.correctAnswer ? score + 1 : score
-      },
-      0
+      }
     )
   }
 
@@ -186,8 +193,34 @@ const UserQuizPage = () => {
     return ['A', 'B', 'C', 'D'][letterIndex] || '?'
   }
 
-  if (isLoading) return <Loader1 />
+  if (isLoading || isPaidQuizLoading) return <Loader1 />
   if ((error && quiz) || !quiz) return <NotAvailable />
+
+  if (!paidQuiz.isQuizPaidFor && quiz) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-lg w-full bg-white text-gray-900 shadow-2xl rounded-2xl p-8 relative overflow-hidden"
+        >
+          <h1 className="text-3xl font-bold text-center mb-4">
+            Payment Required! 💳
+          </h1>
+          <p className="text-center text-gray-700 mb-6">
+            You need to pay N200 to access this quiz.
+          </p>
+          <button
+            onClick={() => navigate(`/quiz/pay/${quiz._id}`)}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+          >
+            Go to Payment
+          </button>
+        </motion.div>
+      </div>
+    )
+  }
 
   if (showResults) {
     const score = calculateScore()

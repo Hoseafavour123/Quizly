@@ -241,7 +241,7 @@ export const deleteQuiz = catchErrors(async (req, res) => {
 })
 
 export const submitQuiz = catchErrors(async (req, res) => {
-  console.log('Inside submit api: ', req.body)
+ 
   const { quizId, answers, score, totalQuestions } = req.body
 
   // Validate required fields

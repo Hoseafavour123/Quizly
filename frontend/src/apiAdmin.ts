@@ -28,7 +28,7 @@ export type QuizzesReturnType = {
   updatedAt: Date
 }
 
-const API_BASE_URL = "https://quizly-3ewy.onrender.com"
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
 
 export const registerAdmin = async (formData: RegisterFormData) => {
   const response = await fetch(`${API_BASE_URL}/auth/admin/register`, {
@@ -277,4 +277,104 @@ export const getAdminStats = async () => {
    throw new Error(errorMessage)
  }
  return response.json()
+}
+
+
+export const notifyUsersForPayment = async (quizId: string) => {
+  const response = await fetch(
+    `${API_BASE_URL}/payment/notify-users/${quizId}`,
+    {
+      method: 'PUT',
+      credentials: 'include',
+    }
+  )
+
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to notify users for payment' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+}
+
+export const startPayment = async (
+  payload: { amount: string; email: string | undefined; full_name: string },
+  quizId: string
+) => {
+  console.log(' data', payload, quizId)
+  const response = await fetch(`${API_BASE_URL}/payment/start/${quizId}`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to start payment' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+
+  const body = await response.json()
+
+  return body
+}
+
+export const fetchPaymentStatus = async (reference: string) => {
+  const response = await fetch(`${API_BASE_URL}/payment/verify?reference=${reference}`, {
+    credentials: 'include',
+  })
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to fetch payment status' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
+}
+
+
+
+export const isQuizPaidFor = async (quizId: string) => {
+  const response = await fetch(`${API_BASE_URL}/payment/quiz-paid/${quizId}`, {
+    credentials: 'include',
+  })
+  if (!response.ok) {
+    // Try to parse error message from response
+    let errorMessage = 'Failed to check if quiz is paid for' // Default error message
+
+    try {
+      const errorData = await response.json() // Assuming the response is JSON
+      errorMessage = errorData.message || errorMessage // Use API message if available
+    } catch (error) {
+      console.error('Error parsing response:', error)
+    }
+
+    throw new Error(errorMessage)
+  }
+  return response.json()
 }

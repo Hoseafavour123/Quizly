@@ -3,6 +3,8 @@ import mongoose, { Document, Schema } from 'mongoose'
 // Define the Payment Interface
 interface IPayment extends Document {
   full_name: string
+  quizId: mongoose.Types.ObjectId
+  userId: mongoose.Types.ObjectId
   email: string
   amount: number
   reference: string
@@ -11,11 +13,23 @@ interface IPayment extends Document {
 
 // Create Schema
 const PaymentSchema = new Schema<IPayment>(
+  
+   
   {
     full_name: {
       type: String,
       required: true,
       trim: true,
+    },
+    quizId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Quiz',
+      required: true,
+    },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
     email: {
       type: String,

@@ -38,6 +38,8 @@ import MyQuizzes from './pages/user/MyQuizzes'
 import Statistics from './pages/user/Statistics'
 import Leaderboard from './pages/user/Leaderboard'
 import UpdateAdminProfile from './pages/admin/AdminEdit'
+import PaymentPage from './pages/user/PaymentPage'
+import PaymentStatusPage from './pages/user/VerifyPayment'
 
 function App() {
   return (
@@ -63,6 +65,8 @@ function App() {
                 <Route path="/statistics" element={<Statistics />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
                 <Route path="/user/settings" element={<UpdateUserProfile />} />
+                <Route path='/quiz/pay/:quizId' element={<PaymentPage/>} />
+                <Route path='/payment/verify' element={<PaymentStatusPage/>} />
               </Route>
             </Route>
 
@@ -101,6 +105,7 @@ function App() {
                   path="/admin/settings"
                   element={<UpdateAdminProfile />}
                 />
+                <Route path='/admin/leaderboard' element={<Leaderboard />} />
               </Route>
             </Route>
 

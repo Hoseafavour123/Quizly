@@ -9,22 +9,40 @@ export const authenticate = (
   res: Response,
   next: NextFunction
 ) => {
-  const accessToken = req.cookies.accessToken;
+  // Allow Paystack to call `/payments/verify` without authentication
+  if (req.path === '/payment/verify') {
+    return next()
+  }
 
-  appAssert(accessToken, UNAUTHORIZED, 'Unauthorized', AppErrorCodes.InvalidAccessToken);
+  const accessToken = req.cookies.accessToken
+  appAssert(
+    accessToken,
+    UNAUTHORIZED,
+    'Unauthorized',
+    AppErrorCodes.InvalidAccessToken
+  )
 
   try {
-    const secret = process.env.JWT_TOKEN_SECRET as string;
-    
-    const payload = jwt.verify(accessToken, secret) as jwt.JwtPayload;
+    const secret = process.env.JWT_TOKEN_SECRET as string
+    const payload = jwt.verify(accessToken, secret) as jwt.JwtPayload
 
-    appAssert(payload, UNAUTHORIZED, 'Invalid token', AppErrorCodes.InvalidAccessToken);
+    appAssert(
+      payload,
+      UNAUTHORIZED,
+      'Invalid token',
+      AppErrorCodes.InvalidAccessToken
+    )
 
-    req.userId = payload.userId;
-    req.sessionId = payload.sessionId;
-    next();
+    req.userId = payload.userId
+    req.sessionId = payload.sessionId
+    next()
   } catch (error: any) {
-    console.error('Token verification error:', error);
-    appAssert(false, UNAUTHORIZED, error.message === 'jwt expired' ? 'Token expired' : 'Invalid token', AppErrorCodes.InvalidAccessToken);
+    console.error('Token verification error:', error)
+    appAssert(
+      false,
+      UNAUTHORIZED,
+      error.message === 'jwt expired' ? 'Token expired' : 'Invalid token',
+      AppErrorCodes.InvalidAccessToken
+    )
   }
-};
+}

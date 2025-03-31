@@ -7,6 +7,7 @@ export interface QuizDocument extends mongoose.Document {
   status: 'draft' | 'live' | 'closed'
   startTime: Date
   category: string
+  notificationSent: boolean
   questions: [
     {
       image: string
@@ -29,6 +30,7 @@ const quizSchema = new mongoose.Schema<QuizDocument>(
     },
     startTime: { type: Date, default: null },
     category: String,
+    notificationSent: {type: Boolean, default: false},
     questions: [
       {
         image: String,

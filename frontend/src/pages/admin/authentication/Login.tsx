@@ -5,6 +5,7 @@ import * as apiAdmin from '../../../apiAdmin'
 import { useMutation } from 'react-query'
 import { useAppContext } from '../../../context/AppContext'
 import { FaBrain } from 'react-icons/fa'
+import { appInfo } from '../../../constants/app.info'
 
 export interface LoginFormData {
   email: string
@@ -38,7 +39,7 @@ const AdminLogin: React.FC = () => {
       <div className="md:w-[30%]">
         <FaBrain className="text-9xl text-indigo-500" />
         <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-6xl max-md:text-4xl font-semibold">
-          Quizly
+          {appInfo.name}
         </h1>
         <p>Take a quiz and earn!</p>
       </div>
